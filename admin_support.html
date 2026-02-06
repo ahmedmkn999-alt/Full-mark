@@ -2,40 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>الدعم الفني | Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | الدعم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #050505; color: #fff; font-family: 'Cairo'; margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 300px; background: #111; border-left: 1px solid #333; overflow-y: auto; }
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: #000; }
+        :root { --main: #00e1ff; --bg: #02050a; --card: #0a0f18; --text: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* الهيدر */
+        .top-bar { padding: 15px; background: #111; border-bottom: 2px solid var(--main); display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-weight: bold; font-size: 1.2rem; color: var(--main); }
+        .back-link { color: #fff; text-decoration: none; background: #333; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
+
+        /* الحاويات */
+        .wrapper { flex: 1; position: relative; overflow: hidden; }
         
-        .user-item { padding: 15px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; }
-        .user-item:hover, .user-item.active { background: #222; }
-        .u-name { font-weight: bold; color: #00e1ff; }
-        .u-last { font-size: 0.8rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* قائمة المستخدمين */
+        .users-list { width: 100%; height: 100%; overflow-y: auto; background: var(--bg); position: absolute; top: 0; left: 0; transition: 0.3s; z-index: 1; }
+        .user-item { padding: 15px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .user-item:hover { background: #0f121a; }
+        .u-avatar { width: 50px; height: 50px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--main); font-size: 1.2rem; border: 2px solid #333; }
+        .u-info h4 { margin: 0; font-size: 1rem; color: #fff; }
+        .u-info p { margin: 3px 0 0; font-size: 0.85rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        .u-time { margin-right: auto; font-size: 0.75rem; color: #555; }
 
-        .msgs { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 15px; border-radius: 10px; max-width: 70%; }
-        .msg.student { align-self: flex-start; background: #222; border: 1px solid #444; }
-        .msg.support { align-self: flex-end; background: #00e1ff; color: #000; }
+        /* منطقة الشات */
+        .chat-view { width: 100%; height: 100%; background: #000; position: absolute; top: 0; left: 100%; transition: 0.3s; z-index: 2; display: flex; flex-direction: column; }
+        .chat-view.active { left: 0; }
+        
+        .chat-header { padding: 10px 15px; background: #111; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 10px; }
+        .back-btn { font-size: 1.2rem; color: #fff; cursor: pointer; padding: 5px; }
+        
+        .messages-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
+        .msg.student { align-self: flex-start; background: #222; border: 1px solid #444; border-bottom-right-radius: 2px; }
+        .msg.admin { align-self: flex-end; background: var(--main); color: #000; border-bottom-left-radius: 2px; font-weight: 600; }
 
-        .input-area { padding: 20px; background: #111; display: flex; gap: 10px; }
-        input { flex: 1; padding: 10px; border-radius: 5px; border: none; }
-        button { padding: 10px 20px; background: #00e1ff; border: none; cursor: pointer; font-weight: bold; }
+        .input-area { padding: 10px; background: #111; border-top: 1px solid #333; display: flex; gap: 10px; }
+        .msg-input { flex: 1; padding: 12px; border-radius: 50px; border: 1px solid #444; background: #000; color: #fff; outline: none; }
+        .send-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--main); border: none; color: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar" id="usersList">
-        <div style="padding:20px; text-align:center;">جاري التحميل...</div>
+    <div class="top-bar">
+        <div class="page-title">💬 رسائل الطلاب</div>
+        <a href="admin_codes.html" class="back-link">الأكواد</a>
     </div>
 
-    <div class="chat-area">
-        <div id="chatHeader" style="padding:15px; background:#151515; border-bottom:1px solid #333; font-weight:bold;">اختر طالباً للبدء</div>
-        <div class="msgs" id="msgsBox"></div>
-        <div class="input-area">
-            <input type="text" id="admInput" placeholder="الرد...">
-            <button onclick="sendReply()">إرسال</button>
+    <div class="wrapper">
+        <div id="usersList" class="users-list">
+            <div style="text-align:center; padding:20px; color:#555;">جاري تحميل الرسائل...</div>
+        </div>
+
+        <div id="chatView" class="chat-view">
+            <div class="chat-header">
+                <i class="fas fa-arrow-right back-btn" onclick="closeChat()"></i>
+                <h4 id="chatUserName" style="margin:0;">اسم الطالب</h4>
+            </div>
+            <div id="msgsBox" class="messages-area"></div>
+            <div class="input-area">
+                <input type="text" id="adminInput" class="msg-input" placeholder="اكتب ردك هنا...">
+                <button onclick="sendReply()" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -45,53 +76,75 @@
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        let currentStudentCode = null;
+        let currentChatId = null;
+        let chatListener = null;
 
-        // تحميل قائمة الطلاب اللي بعتوا رسايل
+        // تحميل القائمة
         db.collection('support').orderBy('lastUpdate', 'desc').onSnapshot(snap => {
             const list = document.getElementById('usersList');
             list.innerHTML = '';
             snap.forEach(doc => {
                 const d = doc.data();
+                const time = d.lastUpdate ? new Date(d.lastUpdate.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                
                 list.innerHTML += `
                 <div class="user-item" onclick="openChat('${doc.id}', '${d.studentName}')">
-                    <div class="u-name">${d.studentName || 'طالب'} (${d.studentCode})</div>
-                    <div class="u-last">${d.lastMessage}</div>
+                    <div class="u-avatar"><i class="fas fa-user"></i></div>
+                    <div class="u-info">
+                        <h4>${d.studentName || 'غير معروف'}</h4>
+                        <p>${d.lastMessage}</p>
+                    </div>
+                    <div class="u-time">${time}</div>
                 </div>`;
             });
         });
 
-        let chatListener = null;
-        function openChat(code, name) {
-            currentStudentCode = code;
-            document.getElementById('chatHeader').innerText = `محادثة مع: ${name}`;
+        function openChat(id, name) {
+            currentChatId = id;
+            document.getElementById('chatUserName').innerText = name;
+            document.getElementById('chatView').classList.add('active');
             const box = document.getElementById('msgsBox');
-            
-            if(chatListener) chatListener(); // إيقاف الاستماع القديم
+            box.innerHTML = '<div style="text-align:center; color:#555; padding:20px;">تحميل المحادثة...</div>';
 
-            chatListener = db.collection('support').doc(code).collection('messages')
+            if(chatListener) chatListener(); // قفل الاستماع القديم
+
+            chatListener = db.collection('support').doc(id).collection('messages')
                 .orderBy('createdAt', 'asc')
                 .onSnapshot(snap => {
                     box.innerHTML = '';
                     snap.forEach(doc => {
                         const m = doc.data();
-                        const type = m.sender === 'student' ? 'student' : 'support';
+                        const type = m.sender === 'me' ? 'student' : 'admin'; // 'me' هنا يعني الطالب
                         box.innerHTML += `<div class="msg ${type}">${m.text}</div>`;
                     });
                     box.scrollTop = box.scrollHeight;
                 });
         }
 
-        function sendReply() {
-            const txt = document.getElementById('admInput').value;
-            if(!txt || !currentStudentCode) return;
+        function closeChat() {
+            document.getElementById('chatView').classList.remove('active');
+            if(chatListener) chatListener();
+            currentChatId = null;
+        }
 
-            db.collection('support').doc(currentStudentCode).collection('messages').add({
-                text: txt, sender: 'support', createdAt: new Date()
+        function sendReply() {
+            const txt = document.getElementById('adminInput').value;
+            if(!txt || !currentChatId) return;
+
+            db.collection('support').doc(currentChatId).collection('messages').add({
+                text: txt,
+                sender: 'admin',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            document.getElementById('admInput').value = '';
+            
+            // تحديث آخر رسالة في القائمة
+            db.collection('support').doc(currentChatId).update({
+                lastMessage: "Admin: " + txt,
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById('adminInput').value = '';
         }
     </script>
 </body>
-  </html>
-  
+</html>
