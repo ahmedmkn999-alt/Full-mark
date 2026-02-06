@@ -31,12 +31,14 @@
         }
         .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
         
+        .header-icons { display: flex; gap: 10px; }
         .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 225, 255, 0.3);
             background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-left: 10px;
+            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
         }
         .icon-btn:active { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); transform: scale(0.95); }
+        .logout-btn { color: #ff4444; border-color: #ff4444; }
 
         /* التنقل */
         .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -70,8 +72,12 @@
         .card-title { padding: 12px; text-align: center; font-weight: bold; font-size: 1rem; color: #fff; background: #0f121a; border-top: 1px solid rgba(255,255,255,0.1); }
 
         /* الفيديو */
+        .video-list { display: flex; flex-direction: column; gap: 20px; }
         .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; margin-bottom: 20px; }
         .video-header { padding: 15px; background: #111; color: var(--main); font-weight: bold; font-size: 1rem; border-bottom: 1px solid #333; }
+
+        /* رسالة فارغة */
+        .empty-msg { text-align: center; color: #777; margin-top: 50px; font-size: 1.2rem; grid-column: 1/-1; }
 
         /* المودال */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
@@ -81,9 +87,14 @@
         .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--main); margin-bottom: 15px; padding: 3px; }
         .user-info div { margin-bottom: 8px; font-size: 1.1rem; color: #ccc; }
         .user-info span { color: var(--main); font-weight: bold; font-family: monospace; }
-        
-        /* رسالة قريباً */
-        .soon-msg { text-align: center; padding: 50px; color: #777; font-size: 1.2rem; grid-column: 1 / -1; }
+
+        /* الشات */
+        .chat-box { height: 350px; display: flex; flex-direction: column; }
+        .chat-msgs { flex: 1; overflow-y: auto; padding: 10px; background: #000; border: 1px solid #333; border-radius: 10px; margin-bottom: 10px; }
+        .msg { padding: 8px 12px; margin-bottom: 5px; border-radius: 8px; max-width: 80%; display: inline-block; }
+        .msg.me { background: var(--main); color: #000; align-self: flex-end; float: left; clear: both; font-weight: bold; }
+        .msg.support { background: #333; color: #fff; align-self: flex-start; float: right; clear: both; }
+        .chat-input { width: 100%; padding: 10px; border-radius: 50px; border: 1px solid #333; background: #111; color: #fff; outline: none; }
     </style>
 </head>
 <body>
@@ -93,9 +104,10 @@
     <div class="container">
         <header>
             <div class="logo">FULL MARK</div>
-            <div style="display:flex;">
+            <div class="header-icons">
+                <div class="icon-btn" onclick="openSupport()"><i class="fas fa-headset"></i></div>
                 <div class="icon-btn" onclick="openProfile()"><i class="fas fa-user"></i></div>
-                <div class="icon-btn" style="color:#ff4444; border-color:#ff4444;" onclick="logout()"><i class="fas fa-power-off"></i></div>
+                <div class="icon-btn logout-btn" onclick="logout()"><i class="fas fa-power-off"></i></div>
             </div>
         </header>
 
@@ -119,8 +131,20 @@
         </div>
     </div>
 
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('supportModal')">&times;</span>
+            <h3 style="color:var(--main); margin-bottom:15px;">الدعم الفني</h3>
+            <div class="chat-box">
+                <div class="chat-msgs" id="chatBody"></div>
+                <input type="text" id="chatInput" class="chat-input" placeholder="اكتب رسالتك..." onkeypress="if(event.keyCode==13) sendMsg()">
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -134,7 +158,7 @@
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // 3. البيانات (الصور والأسماء فقط - فيديوهات اللغات الثانية بس اللي شغالة)
+        // 3. البيانات الشاملة (الصور والأسماء فقط - فيديوهات اللغات الثانية بس اللي شغالة)
         const ALL_DATA = [
             {
                 name: "اللغة العربية",
@@ -209,7 +233,7 @@
                 teachers: [
                     { 
                         name: "فرنساوي (مسيو انس)", 
-                        img: "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png", 
+                        img: "https://i.postimg.cc/sDdy3JyV/lhctmi-Qt-ANEg0PDcec-CE1QTCqr-Kza-Eq-GZ6s-Zt-MJ4.jpg", 
                         videos: [{title:"الجزء 1", link:"3PC1fxpp-Xk"}] 
                     },
                     { 
@@ -219,7 +243,7 @@
                     },
                     { 
                         name: "إيطالي (سنيور مدحت)", 
-                        img: "https://i.postimg.cc/VkX8S0fb/Hotels-near-the-Colosseum.jpg", 
+                        img: "https://i.postimg.cc/0NQ1VWGy/hqdefault.jpg", 
                         videos: [{title:"المنهج كامل", link:"T6hpZH5AMnk"}] 
                     },
                     { 
@@ -240,12 +264,12 @@
         const back = document.getElementById('backBtn');
         let viewStack = [];
 
-        function createCard(title, img, onclick, icon) {
+        function createCard(title, imgUrl, onclick, icon) {
             return `
             <div class="card" onclick="${onclick}">
                 <div class="card-img-container">
                     <div class="img-fallback"><i class="fas ${icon}"></i><br>${title}</div>
-                    <img src="${img}" class="card-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
+                    <img src="${imgUrl}" class="card-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
                 </div>
                 <div class="card-title">${title}</div>
             </div>`;
@@ -269,7 +293,7 @@
             viewStack.push({type: 'teachers', subIdx});
             
             if(!sub.teachers || sub.teachers.length === 0) {
-                grid.innerHTML = '<div class="soon-msg">قريباً</div>';
+                grid.innerHTML = '<div class="empty-msg">قريباً</div>';
                 return;
             }
             grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.img, `renderVideos(${subIdx}, ${i})`, 'fa-chalkboard-teacher')).join('');
@@ -283,7 +307,7 @@
             grid.className = 'video-list'; // ليستة للفيديوهات
 
             if(!teacher.videos || teacher.videos.length === 0) {
-                grid.innerHTML = '<div class="soon-msg">لا يوجد فيديوهات متاحة حالياً</div>';
+                grid.innerHTML = '<div class="empty-msg">لا يوجد فيديوهات متاحة حالياً</div>';
                 return;
             }
 
@@ -305,4 +329,30 @@
         // الرجوع
         function goBack() {
             viewStack.pop();
-            const prev = viewStack
+            const prev = viewStack[viewStack.length - 1];
+            if(!prev) return;
+            if(prev.type === 'subjects') renderSubjects();
+            else if(prev.type === 'teachers') renderTeachers(prev.subIdx);
+        }
+
+        // --- المودال ---
+        function openModal(id){ document.getElementById(id).style.display='flex'; }
+        function closeModal(id){ document.getElementById(id).style.display='none'; }
+        function openProfile(){ 
+            openModal('profileModal'); 
+            const u = localStorage.getItem('fullmark_user');
+            if(u) db.collection('codes').where('code','==',u).get().then(s=>{
+                if(!s.empty) { 
+                    const d=s.docs[0].data(); 
+                    document.getElementById('pName').innerText=d.studentName; 
+                    document.getElementById('pCode').innerText=d.code; 
+                    const exp = d.expiresAt.toDate();
+                    document.getElementById('pExp').innerText = exp.toLocaleDateString('ar-EG');
+                }
+            });
+        }
+        function openSupport() { openModal('supportModal'); loadChat(); }
+        function sendMsg() {
+            const txt = document.getElementById('chatInput').value;
+            if(!txt) return;
+            db.collection('support').doc(userCode).collection('messages').add({ text: tx
