@@ -31,7 +31,7 @@
         }
         .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
         
-        /* أيقونات الهيدر (رجعتها كلها) */
+        /* أيقونات الهيدر */
         .header-icons { display: flex; gap: 10px; align-items: center; }
         .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 225, 255, 0.3);
@@ -164,7 +164,7 @@
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // 🔥 الداتا كاملة بالصور الأصلية 🔥
+        // 🔥 الداتا الكاملة بالصور الأصلية 🔥
         const ALL_DATA = [
             {
                 "name": "كيمياء",
@@ -237,6 +237,19 @@
                     { "name": "فرنساوي", "img": "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png", "videos": [{"title":"تأسيس", "link":"3PC1fxpp-Xk"}] },
                     { "name": "ألماني", "img": "https://i.postimg.cc/bw1hGSyS/52023310-702.jpg", "videos": [{"title":"تأسيس", "link":"JOLc4Jc9yFU"}] }
                 ]
+            },
+            // --- باقي المواد (الهيكل) ---
+            {
+                "name": "اللغة العربية", "img": "https://files.coursatk.online/images/questions/c91723a0f73a35ed26c7c35a47d99f7e02c66e55b552.jpg",
+                "teachers": [{ "name": "أ. محمد صلاح", "img": "https://files.coursatk.online/images/questions/abc2fcc42883dd1a9e93021922da73dc92ff4b40ec76.jpg", "chapters": [] }]
+            },
+            {
+                "name": "الرياضيات", "img": "https://files.coursatk.online/images/subjects/math.png",
+                "teachers": [{ "name": "م. أحمد عصام", "img": "https://files.coursatk.online/images/questions/954b4af4a74f55705aa828d1e05adf6a84a41c5a5fba.jpg", "chapters": [] }]
+            },
+            {
+                "name": "الفيزياء", "img": "https://i.postimg.cc/Z5RBj2mp/904.jpg",
+                "teachers": [{ "name": "محمد عبد المعبود", "img": "https://i.postimg.cc/fRTXpkcm/FB_IMG_1770383335913.jpg", "chapters": [] }]
             }
         ];
 
@@ -270,7 +283,9 @@
             back.style.display = 'inline-block';
             viewStack.push({type: 'teachers', subIdx});
             
-            if(!sub.teachers || sub.teachers.length===0) { grid.innerHTML='<div class="empty-msg">لا يوجد مدرسين حالياً</div>'; return; }
+            if(!sub.teachers || sub.teachers.length===0) {
+                grid.innerHTML='<div class="empty-msg">لا يوجد مدرسين حالياً</div>'; return;
+            }
 
             // لو لغات تانية (فيديوهات يوتيوب مباشرة)
             if(sub.name === "اللغات الثانية") {
@@ -286,6 +301,7 @@
             title.innerText = teacher.name;
             viewStack.push({type: 'chapters', subIdx, techIdx});
             if(!teacher.chapters || teacher.chapters.length===0) { grid.innerHTML='<div class="empty-msg">لا يوجد محتوى حالياً</div>'; return; }
+            // استخدم صورة المدرس للفصول لو مفيش صورة للفصل
             grid.innerHTML = teacher.chapters.map((c, i) => createCard(c.chapter_name, teacher.img, `renderLectures(${subIdx}, ${techIdx}, ${i})`)).join('');
         }
 
@@ -293,136 +309,4 @@
         function renderLectures(subIdx, techIdx, chapIdx) {
             const chapter = ALL_DATA[subIdx].teachers[techIdx].chapters[chapIdx];
             title.innerText = chapter.chapter_name;
-            viewStack.push({type: 'lectures', subIdx, techIdx, chapIdx});
-            if(!chapter.lectures || chapter.lectures.length===0) { grid.innerHTML='<div class="empty-msg">فارغ</div>'; return; }
-            grid.innerHTML = chapter.lectures.map((l, i) => createCard(l.lecture_name, ALL_DATA[subIdx].teachers[techIdx].img, `renderVideos(${subIdx}, ${techIdx}, ${chapIdx}, ${i})`)).join('');
-        }
-
-        // عرض الفيديوهات (m3u8)
-        function renderVideos(subIdx, techIdx, chapIdx, lecIdx) {
-            const lecture = ALL_DATA[subIdx].teachers[techIdx].chapters[chapIdx].lectures[lecIdx];
-            title.innerText = lecture.lecture_name;
-            grid.className = 'video-list';
-            viewStack.push({type: 'videos'});
-            
-            if(!lecture.videos || lecture.videos.length === 0) { grid.innerHTML='<div class="empty-msg">لا يوجد فيديوهات</div>'; return; }
-
-            grid.innerHTML = lecture.videos.map((v, i) => `
-                <div class="video-wrapper">
-                    <div class="video-header">${v.video_name}</div>
-                    <div class="plyr__video-embed"><video id="player-${i}" controls crossorigin playsinline style="width:100%"></video></div>
-                </div>`).join('');
-
-            // تشغيل HLS
-            setTimeout(() => {
-                lecture.videos.forEach((v, i) => {
-                    const video = document.getElementById(`player-${i}`);
-                    if (Hls.isSupported()) {
-                        const hls = new Hls();
-                        hls.loadSource(v.link);
-                        hls.attachMedia(video);
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = v.link;
-                    }
-                    new Plyr(video);
-                });
-            }, 500);
-        }
-
-        // عرض فيديوهات اللغات الثانية (يوتيوب)
-        function renderDirectVideos(subIdx, techIdx) {
-            const teacher = ALL_DATA[subIdx].teachers[techIdx];
-            title.innerText = teacher.name;
-            grid.className = 'video-list';
-            viewStack.push({type: 'videos'});
-            grid.innerHTML = teacher.videos.map((v, i) => `
-                <div class="video-wrapper">
-                    <div class="video-header">${v.title}</div>
-                    <div class="plyr__video-embed">
-                        <iframe src="https://www.youtube.com/embed/${v.link}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
-                    </div>
-                </div>`).join('');
-            setTimeout(() => { Array.from(document.querySelectorAll('.plyr__video-embed')).map(p => new Plyr(p)); }, 500);
-        }
-
-        function goBack() {
-            if(viewStack.length > 1) {
-                viewStack.pop(); const prev = viewStack[viewStack.length-1];
-                if(prev.type === 'subjects') renderSubjects();
-                else if(prev.type === 'teachers') renderTeachers(prev.subIdx);
-                else if(prev.type === 'chapters') renderChapters(prev.subIdx, prev.techIdx);
-                else if(prev.type === 'lectures') renderLectures(prev.subIdx, prev.techIdx, prev.chapIdx);
-            }
-        }
-
-        // --- المودال والبروفايل والدعم ---
-        function openModal(id){ document.getElementById(id).style.display='flex'; }
-        function closeModal(id){ document.getElementById(id).style.display='none'; }
-        
-        // صورة البروفايل
-        const savedAvatar = localStorage.getItem('user_avatar');
-        if(savedAvatar) {
-            document.getElementById('headerProfilePic').src = savedAvatar;
-            document.getElementById('modalProfilePic').src = savedAvatar;
-        }
-        function changeProfilePic(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('headerProfilePic').src = e.target.result;
-                    document.getElementById('modalProfilePic').src = e.target.result;
-                    localStorage.setItem('user_avatar', e.target.result);
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function openProfile(){ 
-            openModal('profileModal'); 
-            const u = localStorage.getItem('fullmark_user');
-            if(u) db.collection('codes').where('code','==',u).get().then(s=>{
-                if(!s.empty) { 
-                    const d=s.docs[0].data(); 
-                    document.getElementById('pName').innerText=d.studentName; 
-                    document.getElementById('pCode').innerText=d.code; 
-                    const exp = d.expiresAt.toDate();
-                    setInterval(() => {
-                        const now = new Date().getTime(); const dist = exp - now;
-                        if (dist < 0) { document.getElementById("countdown").innerText = "منتهي"; }
-                        else {
-                            const d = Math.floor(dist / (1000 * 60 * 60 * 24));
-                            const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-                            document.getElementById("countdown").innerText = `${d} يوم : ${h} ساعة : ${m} دقيقة`;
-                        }
-                    }, 1000);
-                }
-            });
-        }
-
-        // الشات
-        const userCode = localStorage.getItem('fullmark_user');
-        function openSupport() { openModal('supportModal'); loadChat(); }
-        function sendMsg() {
-            const txt = document.getElementById('chatInput').value;
-            if(!txt) return;
-            db.collection('support').doc(userCode).collection('messages').add({ text: txt, sender: 'me', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            db.collection('support').doc(userCode).set({ studentName: document.getElementById('pName').innerText || 'طالب', studentCode: userCode, lastMessage: txt, lastUpdate: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-            document.getElementById('chatInput').value = '';
-        }
-        function loadChat() {
-            const box = document.getElementById('chatBody');
-            db.collection('support').doc(userCode).collection('messages').orderBy('createdAt').onSnapshot(snap => {
-                box.innerHTML = '';
-                snap.forEach(doc => { const m = doc.data(); box.innerHTML += `<div style="overflow:hidden; width:100%;"><div class="msg ${m.sender}">${m.text}</div></div>`; });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
-        function logout(){ localStorage.removeItem('fullmark_user'); window.location.href="login.html"; }
-
-        if(!localStorage.getItem('fullmark_user')) window.location.href="login.html";
-        renderSubjects();
-    </script>
-</body>
-</html>
+            viewStack.push({type: 'lectures', subIdx, techIdx, chapIdx})
