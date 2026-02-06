@@ -59,8 +59,7 @@
                         <th>الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="activeTableBody">
-                    </tbody>
+                <tbody id="activeTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -77,66 +76,59 @@
                         <th>الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="archiveTableBody">
-                    </tbody>
+                <tbody id="archiveTableBody"></tbody>
             </table>
         </div>
     </div>
-
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
-    // نفس إعداداتك بالظبط
+    // إعداداتك الجديدة
     const firebaseConfig = {
       apiKey: "AIzaSyD0Yq1TCIkjCzDJuzbWCA6XNDC4REsIJ84",
       authDomain: "full-mark-2878d.firebaseapp.com",
       projectId: "full-mark-2878d",
       storageBucket: "full-mark-2878d.firebasestorage.app",
       messagingSenderId: "793615165668",
-      appId: "1:793615165668:web:b5e0cde21901ff060d24f1"
+      appId: "1:793615165668:web:82dfbc57446e76e30d24f1",
+      measurementId: "G-L1PG0FLKTW"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // تشغيل المستمع للبيانات (Realtime)
-    window.onload = function() {
-        loadCodes();
-    };
+    window.onload = function() { loadCodes(); };
 
-    // 1. دالة توليد الكود
     function generateCode() {
         const name = document.getElementById('studentName').value;
         const duration = document.getElementById('duration').value;
 
         if(!name) return alert("اكتب اسم الطالب الأول!");
 
-        // إنشاء كود عشوائي
         const randomCode = 'STD-' + Math.floor(1000 + Math.random() * 9000);
-
-        // حساب تاريخ الانتهاء
         let expiresAt = new Date();
+        
         if(duration === '1h') expiresAt.setHours(expiresAt.getHours() + 1);
         else if(duration === '1m') expiresAt.setMonth(expiresAt.getMonth() + 1);
 
         db.collection('codes').add({
             studentName: name,
             code: randomCode,
-            status: 'active', // active, expired, banned
+            status: 'active',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             expiresAt: expiresAt
         }).then(() => {
-            // نسخ الكود للحافظة
             navigator.clipboard.writeText(randomCode);
             alert(`تم نسخ الكود: ${randomCode}\nللطالب: ${name}`);
             document.getElementById('studentName').value = '';
+        }).catch(err => {
+            alert("خطأ في الحفظ! تأكد أنك عدلت الـ Rules في فايربيز.\n" + err.message);
         });
     }
 
-    // 2. تحميل وعرض الأكواد
     function loadCodes() {
         db.collection('codes').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
             const activeBody = document.getElementById('activeTableBody');
@@ -148,83 +140,51 @@
             snapshot.forEach(doc => {
                 const d = doc.data();
                 const id = doc.id;
-                
-                // التأكد من التاريخ (هل انتهى؟)
                 const now = new Date();
                 const expiryDate = d.expiresAt ? d.expiresAt.toDate() : new Date();
                 let status = d.status;
 
-                // لو الوقت عدى وهو لسه active، حوله expired أوتوماتيك
                 if (status === 'active' && now > expiryDate) {
                     status = 'expired';
                     db.collection('codes').doc(id).update({ status: 'expired' });
                 }
 
-                // تنسيق التاريخ للعرض
                 const dateStr = expiryDate.toLocaleString('ar-EG');
 
                 if (status === 'active') {
                     activeBody.innerHTML += `
                         <tr>
                             <td class="fw-bold">${d.studentName}</td>
-                            <td>${d.code} <i class="fas fa-copy copy-btn ms-2" onclick="copy('${d.code}')"></i></td>
+                            <td>${d.code} <i class="fas fa-copy copy-btn ms-2" onclick="navigator.clipboard.writeText('${d.code}')"></i></td>
                             <td>${dateStr}</td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" onclick="changeStatus('${id}', 'banned')">حظر</button>
-                            </td>
-                        </tr>
-                    `;
+                            <td><button class="btn btn-sm btn-danger" onclick="changeStatus('${id}', 'banned')">حظر</button></td>
+                        </tr>`;
                 } else {
                     const badgeClass = status === 'banned' ? 'badge-banned' : 'badge-expired';
-                    const statusText = status === 'banned' ? 'محظور' : 'منتهي الصلاحية';
-                    
+                    const statusText = status === 'banned' ? 'محظور' : 'منتهي';
                     archiveBody.innerHTML += `
                         <tr>
                             <td>${d.studentName}</td>
                             <td>${d.code}</td>
                             <td><span class="${badgeClass}">${statusText}</span></td>
                             <td>
-                                <button class="btn btn-sm btn-success" onclick="renewCode('${id}')">تجديد شهر</button>
+                                <button class="btn btn-sm btn-success" onclick="renewCode('${id}')">تجديد</button>
                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteCode('${id}')">حذف</button>
                             </td>
-                        </tr>
-                    `;
+                        </tr>`;
                 }
             });
         });
     }
 
-    // 3. تغيير الحالة (حظر)
-    function changeStatus(id, newStatus) {
-        if(confirm('هل أنت متأكد؟')) {
-            db.collection('codes').doc(id).update({ status: newStatus });
-        }
-    }
-
-    // 4. تجديد الكود (تجديد شهر من الآن)
+    function changeStatus(id, st) { if(confirm('تأكيد؟')) db.collection('codes').doc(id).update({ status: st }); }
+    function deleteCode(id) { if(confirm('حذف نهائي؟')) db.collection('codes').doc(id).delete(); }
     function renewCode(id) {
         const newExpiry = new Date();
         newExpiry.setMonth(newExpiry.getMonth() + 1);
-        
-        db.collection('codes').doc(id).update({
-            status: 'active',
-            expiresAt: newExpiry
-        });
+        db.collection('codes').doc(id).update({ status: 'active', expiresAt: newExpiry });
     }
-
-    // 5. حذف نهائي
-    function deleteCode(id) {
-        if(confirm('حذف نهائي؟ لن يتمكن الطالب من الدخول بهذا الكود مجدداً.')) {
-            db.collection('codes').doc(id).delete();
-        }
-    }
-
-    // نسخ الكود يدوي
-    function copy(text) {
-        navigator.clipboard.writeText(text);
-        alert('تم النسخ: ' + text);
-    }
-
 </script>
 </body>
-</html>
+            </html>
+            
