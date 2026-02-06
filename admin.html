@@ -59,10 +59,9 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
             background: linear-gradient(45deg, #0f172a, #1e293b);
-            color: var(--main); font-size: 1.2rem; font-weight: bold;
-            text-align: center; padding: 10px; flex-direction: column;
+            color: var(--main); font-size: 3rem; font-weight: bold;
+            text-align: center; padding: 10px;
         }
-        .img-fallback i { font-size: 2.5rem; margin-bottom: 10px; color: #fff; }
 
         .card-title { 
             padding: 15px; text-align: center; font-weight: 800; font-size: 1.1rem; 
@@ -152,9 +151,10 @@
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // 3. البيانات الشاملة (المدمجة والمصححة)
+        // =========================================================
+        // 🔥 قاعدة البيانات الشاملة (كل المواد والمدرسين) 🔥
+        // =========================================================
         const ALL_DATA = [
-            // --- بيانات العلمي ---
             {
                 subject_name: "لغة عربية",
                 image_url: "https://i.postimg.cc/L6xvnk5X/mn-awl-mn-tklm-allght-alʿrbyt.jpg",
@@ -163,11 +163,11 @@
                         name: "أ.محمد صلاح",
                         image_url: "https://i.postimg.cc/ZRJy8gDR/FB-IMG-1770382315133.jpg",
                         chapters: [
-                            { chapter_name: "الشهر الأول", lectures: [{ lecture_name: "المحاضرة 1", videos: [{ video_name: "النحو", links: [{ url: "https://river-5-545.rtbcdn.ru/hls-vod/lMLIGlXXPat9W2owCUKuWw/1770646511/3320/0x5000c500e9daa4c6/c24ad275e16e460e8f576a81bf0d7ba5.mp4.m3u8" }] }] }] },
+                            { chapter_name: "الشهر الأول", lectures: [{ lecture_name: "المحاضرة 1", videos: [{ video_name: "النحو - المبتدأ والخبر", links: [{ url: "https://river-5-545.rtbcdn.ru/hls-vod/lMLIGlXXPat9W2owCUKuWw/1770646511/3320/0x5000c500e9daa4c6/c24ad275e16e460e8f576a81bf0d7ba5.mp4.m3u8" }] }] }] },
                             { chapter_name: "معسكر 4-1", lectures: [{ lecture_name: "المهمة الأولى", videos: [{ video_name: "شرح النحو", links: [{ url: "https://river-4-429.rtbcdn.ru/hls-vod/pY6nkzrcG4lHcv1P_FKB1w/1770639813/3322/0x5000c500e9ebd5af/7ed17944068f431bbc6a44ed612999bd.mp4.m3u8" }] }] }] }
                         ]
                     },
-                    { name: "رضا الفاروق", image_url: "https://i.postimg.cc/c4Pg965p/1723904748-y-CL9UA.png", chapters: [] }
+                    { name: "أ. رضا الفاروق", image_url: "https://i.postimg.cc/c4Pg965p/1723904748-y-CL9UA.png", chapters: [] }
                 ]
             },
             {
@@ -181,35 +181,35 @@
                 ]
             },
             {
-                subject_name: "فيزياء",
+                subject_name: "الفيزياء",
                 image_url: "https://i.postimg.cc/Z5RBj2mp/904.jpg",
                 teachers: [
-                    { name: "محمد عبد المعبود", image_url: "https://i.postimg.cc/fRTXpkcm/FB_IMG_1770383335913.jpg", chapters: [] },
-                    { name: "مستر كيرلس", image_url: "https://i.postimg.cc/qR0pD6nd/FB-IMG-1770383231786.jpg", chapters: [] },
-                    { name: "محمود مجدي", image_url: "https://i.postimg.cc/wjGVkDCy/Magdy_Image_ab6042b951be2cb6297e.png", chapters: [] },
-                    { name: "حسام خليل", image_url: "https://i.postimg.cc/pL6ZBKwm/c3_21a0b369.png", chapters: [] }
+                    { name: "أ. عبد المعبود", image_url: "https://i.postimg.cc/fRTXpkcm/FB_IMG_1770383335913.jpg", chapters: [] },
+                    { name: "د. كيرلس", image_url: "https://i.postimg.cc/qR0pD6nd/FB-IMG-1770383231786.jpg", chapters: [] },
+                    { name: "م. محمود مجدي", image_url: "https://i.postimg.cc/wjGVkDCy/Magdy_Image_ab6042b951be2cb6297e.png", chapters: [] },
+                    { name: "أ. حسام خليل", image_url: "https://i.postimg.cc/pL6ZBKwm/c3_21a0b369.png", chapters: [] }
                 ]
             },
             {
-                subject_name: "كيمياء",
+                subject_name: "الكيمياء",
                 image_url: "https://i.postimg.cc/Njz4xR3j/4a228f61e5d6843a9ddd56e6cc39ef6d.jpg",
                 teachers: [
-                    { name: "خالد صقر", image_url: "https://i.postimg.cc/hGQ0Zfn9/teacher_Bflsmq_Qf.webp", chapters: [] },
-                    { name: "محمد عبدالجواد", image_url: "https://i.postimg.cc/rpR9ZKTR/c78ffbf64a791da67752132a9aaf7c8f127fc4f4.jpg", chapters: [] },
-                    { name: "عبدالله حبشي", image_url: "https://i.postimg.cc/MGfY3vwV/hero_light.webp", chapters: [] },
-                    { name: "عمرو الصيفي", image_url: "https://i.postimg.cc/5tQmK6Jm/FB_IMG_1770384007129.jpg", chapters: [] },
+                    { name: "أ. خالد صقر", image_url: "https://i.postimg.cc/hGQ0Zfn9/teacher_Bflsmq_Qf.webp", chapters: [] },
+                    { name: "أ. عبدالجواد", image_url: "https://i.postimg.cc/rpR9ZKTR/c78ffbf64a791da67752132a9aaf7c8f127fc4f4.jpg", chapters: [] },
+                    { name: "د. عبدالله حبشي", image_url: "https://i.postimg.cc/MGfY3vwV/hero_light.webp", chapters: [] },
+                    { name: "أ. عمرو الصيفي", image_url: "https://i.postimg.cc/5tQmK6Jm/FB_IMG_1770384007129.jpg", chapters: [] },
                     { name: "جون جهبذ", image_url: "https://i.postimg.cc/3w0Zfdh9/gahbaz_hero_section_main_character_308fc2da8ff8bae443d4.webp", chapters: [] }
                 ]
             },
             {
-                subject_name: "أحياء",
+                subject_name: "الأحياء",
                 image_url: "https://i.postimg.cc/cJjdZkVx/FB_IMG_1770384472698.jpg",
                 teachers: [
-                    { name: "أحمد الجوهري", image_url: "https://i.postimg.cc/XJC4vcbq/89549ee43b7a31c4f350f0d32a116fbd02313c37.png", chapters: [] },
-                    { name: "محمد أيمن", image_url: "https://i.postimg.cc/856NCBS7/profile_433b1d2b5e7bfd30bed5.png", chapters: [] },
-                    { name: "أحمد رضوان", image_url: "https://i.postimg.cc/fbFMZq6L/FB_IMG_1770384659581.jpg", chapters: [] },
+                    { name: "أ. احمد الجوهري", image_url: "https://i.postimg.cc/XJC4vcbq/89549ee43b7a31c4f350f0d32a116fbd02313c37.png", chapters: [] },
+                    { name: "أ. محمد ايمن", image_url: "https://i.postimg.cc/856NCBS7/profile_433b1d2b5e7bfd30bed5.png", chapters: [] },
+                    { name: "أ. احمد رضوان", image_url: "https://i.postimg.cc/fbFMZq6L/FB_IMG_1770384659581.jpg", chapters: [] },
                     { name: "جيو ماجد", image_url: "https://i.postimg.cc/pd7PxcgR/FB_IMG_1770384621215.jpg", chapters: [] },
-                    { name: "سامح أحمد", image_url: "https://i.postimg.cc/g05Gdtf2/FB-IMG-1770384584699.jpg", chapters: [] }
+                    { name: "أ. سامح احمد", image_url: "https://i.postimg.cc/g05Gdtf2/FB-IMG-1770384584699.jpg", chapters: [] }
                 ]
             },
             {
@@ -242,49 +242,38 @@
                         chapters: [
                             { chapter_name: "الشهر الخامس", lectures: [{ lecture_name: "الأسبوع 4", videos: [{ video_name: "المشكلات الاجتماعية", links: [{ url: "https://river-3-312.rtbcdn.ru/hls-vod/qEmQG7_j9IxPTD7tdyYxsg/1770826539/3326/0x5000c500e9d3839b/2db0791c39644f7abb18f9ad9922b096.mp4.m3u8" }] }] }] }
                         ]
+                    },
+                    {
+                        name: "أحمد زهران",
+                        image_url: "https://files.coursatk.online/images/questions/5eab71b642c6672b9182be0d1dd887beb3c8d2b98cf2.jpg",
+                        chapters: [
+                            { chapter_name: "الشهر الخامس", lectures: [{ lecture_name: "المحاضرة 18", videos: [{ video_name: "شرح الحصة", links: [{ url: "https://river-3-349.rtbcdn.ru/hls-vod/1RzkI1YooRj0A-Owz-NrUw/1770670174/1786/0x5000c500c5826c38/3a39fffdc58949a8b2d362b76afbe4c5.mp4.m3u8" }] }] }] }
+                        ]
                     }
                 ]
             },
             // --- اللغات الثانية ---
             {
-                subject_name: "لغة فرنسية",
-                image_url: "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png",
+                subject_name: "اللغات الثانية",
+                image_url: "https://cdn-icons-png.flaticon.com/512/3898/3898082.png", // أيقونة عامة
                 teachers: [
                     {
-                        name: "مسيو انس السعيد",
+                        name: "فرنساوي (مسيو انس)",
                         image_url: "https://i.postimg.cc/sDdy3JyV/lhctmi-Qt-ANEg0PDcec-CE1QTCqr-Kza-Eq-GZ6s-Zt-MJ4.jpg",
                         chapters: [ { chapter_name: "المنهج", lectures: [{ lecture_name: "3 ثانوي", videos: [{ video_name: "الجزء الأول", links: [{ url: "https://www.youtube.com/watch?v=3PC1fxpp-Xk" }] }] }] } ]
-                    }
-                ]
-            },
-            {
-                subject_name: "لغة ألمانية",
-                image_url: "https://i.postimg.cc/bw1hGSyS/52023310-702.jpg",
-                teachers: [
+                    },
                     {
-                        name: "هير ياسين",
+                        name: "ألماني (هير ياسين)",
                         image_url: "https://i.postimg.cc/MHkkKzCd/hqdefault-(1).jpg",
                         chapters: [ { chapter_name: "التأسيس", lectures: [{ lecture_name: "المحاضرة 1", videos: [{ video_name: "البداية", links: [{ url: "https://www.youtube.com/watch?v=JOLc4Jc9yFU" }] }] }] } ]
-                    }
-                ]
-            },
-            {
-                subject_name: "لغة إيطالية",
-                image_url: "https://i.postimg.cc/VkX8S0fb/Hotels-near-the-Colosseum.jpg",
-                teachers: [
+                    },
                     {
-                        name: "سنيور مدحت",
+                        name: "إيطالي (سنيور مدحت)",
                         image_url: "https://i.postimg.cc/0NQ1VWGy/hqdefault.jpg",
                         chapters: [ { chapter_name: "مراجعة", lectures: [{ lecture_name: "شامل", videos: [{ video_name: "المنهج كامل", links: [{ url: "https://www.youtube.com/watch?v=T6hpZH5AMnk" }] }] }] } ]
-                    }
-                ]
-            },
-            {
-                subject_name: "لغة إسبانية",
-                image_url: "https://i.postimg.cc/L8jpqg95/250px-Flag-of-Spain-svg.png",
-                teachers: [
+                    },
                     {
-                        name: "سنيور ماجد",
+                        name: "إسباني (سنيور ماجد)",
                         image_url: "https://i.postimg.cc/jdbVpdQ5/FB-IMG-1770239115997.jpg",
                         chapters: [ { chapter_name: "مراجعة", lectures: [{ lecture_name: "شامل", videos: [{ video_name: "شرح كامل", links: [{ url: "https://www.youtube.com/watch?v=K9ZOydc1cqs" }] }] }] } ]
                     }
@@ -323,5 +312,4 @@
         }
 
         // 2. عرض المدرسين
-        function renderTeachers(subIdx) {
-            const sub = AL
+    
