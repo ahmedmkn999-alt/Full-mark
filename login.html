@@ -5,25 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول | Full Mark</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { margin: 0; height: 100vh; background: #000; display: flex; align-items: center; justify-content: center; font-family: 'Cairo', sans-serif; overflow: hidden; }
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a1f 0%, #000 90%); z-index: -1; }
-        .login-box { background: rgba(10, 10, 15, 0.9); border: 2px solid #00e1ff; padding: 40px 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 0 50px rgba(0,225,255,0.2); }
-        h1 { color: #00e1ff; font-size: 2.5rem; margin-bottom: 30px; text-transform: uppercase; text-shadow: 0 0 20px rgba(0,225,255,0.5); }
-        input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; border-radius: 50px; color: #fff; font-size: 1.2rem; text-align: center; outline: none; margin-bottom: 20px; font-family: 'Cairo'; }
-        input:focus { border-color: #00e1ff; box-shadow: 0 0 15px rgba(0,225,255,0.3); }
-        button { width: 100%; padding: 15px; background: #00e1ff; color: #000; border: none; border-radius: 50px; font-size: 1.3rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #fff; box-shadow: 0 0 20px #00e1ff; transform: scale(1.05); }
-        .error { color: #ff3333; margin-top: 15px; display: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        
+        body {
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            /* خلفية ثابتة فخمة جداً بديلة للمتحركة */
+            background: radial-gradient(circle at center, #1a2332 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        /* أنيميشن الزوم */
+        @keyframes zoomInEntry {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .login-card {
+            background: rgba(20, 20, 30, 0.6);
+            border: 1px solid rgba(0, 225, 255, 0.3);
+            padding: 50px 30px;
+            border-radius: 25px;
+            width: 90%; max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            
+            /* تطبيق الأنيميشن */
+            animation: zoomInEntry 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .logo {
+            font-size: 2.5rem; font-weight: 900; color: #fff;
+            margin-bottom: 10px; text-transform: uppercase;
+            text-shadow: 0 0 20px #00e1ff;
+        }
+        
+        .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
+
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group i {
+            position: absolute; top: 50%; right: 20px; transform: translateY(-50%);
+            color: #00e1ff; font-size: 1.2rem;
+        }
+        
+        input {
+            width: 100%; padding: 15px 50px 15px 15px;
+            background: #0a0a0a; border: 2px solid #333;
+            border-radius: 50px; color: #fff; font-size: 1.1rem;
+            outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: #00e1ff; box-shadow: 0 0 15px rgba(0, 225, 255, 0.2); }
+
+        button {
+            width: 100%; padding: 15px;
+            background: linear-gradient(90deg, #00e1ff, #0088ff);
+            color: #000; border: none; border-radius: 50px;
+            font-size: 1.3rem; font-weight: bold; cursor: pointer;
+            transition: 0.3s; margin-top: 10px;
+            box-shadow: 0 5px 20px rgba(0, 225, 255, 0.3);
+        }
+        button:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 225, 255, 0.5); }
+        button:active { transform: scale(0.95); }
+
+        .status-msg { margin-top: 20px; color: #ff4444; font-size: 0.9rem; min-height: 20px; }
     </style>
 </head>
 <body>
-    <div class="bg"></div>
-    <div class="login-box">
-        <h1>FULL MARK</h1>
-        <input type="text" id="code" placeholder="أدخل كود الطالب">
-        <button onclick="login()">دخول</button>
-        <p id="error" class="error">الكود غير صحيح</p>
+
+    <div class="login-card">
+        <div class="logo">FULL MARK</div>
+        <div class="subtitle">بوابتك للتفوق الدراسي</div>
+        
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="text" id="code" placeholder="أدخل كود الطالب هنا" autocomplete="off">
+        </div>
+        
+        <button onclick="login()">تسجيل الدخول</button>
+        <div id="msg" class="status-msg"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -34,33 +98,28 @@
 
         function login() {
             const code = document.getElementById('code').value.trim();
+            const msg = document.getElementById('msg');
             const btn = document.querySelector('button');
-            const err = document.getElementById('error');
 
-            if(!code) return;
+            if(!code) { msg.innerText = "يرجى كتابة الكود!"; return; }
             
-            btn.innerHTML = 'جاري التحقق...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
             
-            // بحث سريع في قاعدة البيانات
             db.collection('codes').where('code', '==', code).get().then(snap => {
                 if(snap.empty) {
-                    // لو الكود مش موجود (للتجربة خليه يدخل برضه بس ينبهك)
-                    // في الوضع الطبيعي المفروض نمنعه، بس هنا عشان نتأكد إن المشكلة مش في الداتا بيز
-                    saveAndGo(code, "طالب تجريبي"); 
+                    msg.innerText = "هذا الكود غير مسجل أو خاطئ";
+                    btn.innerHTML = "تسجيل الدخول";
                 } else {
                     const data = snap.docs[0].data();
-                    saveAndGo(data.code, data.studentName);
+                    localStorage.setItem('fullmark_user', data.code);
+                    msg.style.color = '#00ff00';
+                    msg.innerText = "تم الدخول بنجاح! جاري التحويل...";
+                    setTimeout(() => window.location.href = "index.html", 1000);
                 }
             }).catch(e => {
-                // لو في مشكلة في النت، هندخله برضه عشان نجرب الموقع
-                saveAndGo(code, "وضع الاوفلاين");
+                msg.innerText = "خطأ في الاتصال بالسيرفر";
+                btn.innerHTML = "تسجيل الدخول";
             });
-        }
-
-        function saveAndGo(code, name) {
-            localStorage.setItem('fullmark_user', code);
-            localStorage.setItem('fullmark_name', name); // حفظنا الاسم كمان احتياطي
-            window.location.href = "index.html";
         }
     </script>
 </body>
