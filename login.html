@@ -172,7 +172,7 @@
         });
 
         // ==========================================
-        // 2. كود Firebase (نفس اللوجيك القديم)
+        // 2. كود Firebase (تم التحديث بالبيانات الجديدة)
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyD0Yq1TCIkjCzDJuzbWCA6XNDC4REsIJ84",
@@ -180,7 +180,8 @@
             projectId: "full-mark-2878d",
             storageBucket: "full-mark-2878d.firebasestorage.app",
             messagingSenderId: "793615165668",
-            appId: "1:793615165668:web:b5e0cde21901ff060d24f1"
+            appId: "1:793615165668:web:82dfbc57446e76e30d24f1",
+            measurementId: "G-L1PG0FLKTW"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -198,6 +199,7 @@
             errorMsg.style.display = 'none';
 
             try {
+                // البحث عن الكود في الداتا بيز
                 const snapshot = await db.collection('codes').where('code', '==', code).get();
 
                 if (snapshot.empty) {
@@ -210,12 +212,15 @@
                 const now = new Date();
                 const expiryDate = data.expiresAt ? data.expiresAt.toDate() : new Date();
 
+                // 1. هل الكود محظور؟
                 if (data.status === 'banned') {
                     showError("تم حظر هذا الحساب");
                     return;
                 }
 
+                // 2. هل الكود منتهي؟
                 if (data.status === 'expired' || now > expiryDate) {
+                    // تحديث الحالة لـ expired لو مكنتش كده
                     if(data.status !== 'expired') {
                          db.collection('codes').doc(doc.id).update({ status: 'expired' });
                     }
@@ -223,12 +228,14 @@
                     return;
                 }
 
+                // 3. دخول ناجح
                 localStorage.setItem('fullmark_user', code);
                 window.location.href = "index.html"; 
 
             } catch (error) {
                 console.error(error);
-                showError("تأكد من الانترنت وحاول مرة أخرى");
+                // رسالة خطأ لو الرولز مقفولة أو النت فاصل
+                showError("تأكد من الانترنت أو تواصل مع الدعم");
             }
 
             function showError(msg) {
@@ -239,5 +246,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
