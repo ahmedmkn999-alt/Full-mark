@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --main: #00e1ff; } /* نفس لون المنصة */
+        /* نفس ثيم المنصة */
+        :root { --main: #00e1ff; } 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         
         body {
@@ -18,38 +19,29 @@
             overflow: hidden;
         }
 
-        @keyframes zoomInEntry {
-            0% { transform: scale(0); opacity: 0; }
-            80% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
+        /* كارت الدخول */
         .login-card {
             background: rgba(20, 20, 30, 0.6);
             border: 1px solid rgba(0, 225, 255, 0.3);
-            padding: 50px 30px;
+            padding: 40px 30px;
             border-radius: 25px;
             width: 90%; max-width: 400px;
             text-align: center;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(15px);
-            animation: zoomInEntry 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             position: relative;
             min-height: 400px;
             display: flex; flex-direction: column; justify-content: center;
         }
 
-        /* اللوجو بنفس لون المنصة بالظبط */
         .logo {
-            font-size: 2.8rem; font-weight: 900; color: #fff;
+            font-size: 2.5rem; font-weight: 900; color: #fff;
             margin-bottom: 5px; text-transform: uppercase;
-            /* التوهج النيون الأزرق */
-            text-shadow: 0 0 10px var(--main), 0 0 20px var(--main), 0 0 40px var(--main);
+            text-shadow: 0 0 10px var(--main), 0 0 20px var(--main);
         }
         
         .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
 
-        /* منطقة الإدخال */
         .input-group { position: relative; margin-bottom: 25px; }
         .input-group i {
             position: absolute; top: 50%; right: 20px; transform: translateY(-50%);
@@ -68,16 +60,14 @@
             width: 100%; padding: 15px;
             background: linear-gradient(90deg, #00e1ff, #0088ff);
             color: #000; border: none; border-radius: 50px;
-            font-size: 1.3rem; font-weight: bold; cursor: pointer;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
             transition: 0.3s; margin-top: 10px;
-            box-shadow: 0 5px 20px rgba(0, 225, 255, 0.3);
         }
-        button:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 225, 255, 0.5); }
         button:active { transform: scale(0.95); }
 
         .status-msg { margin-top: 20px; color: #ff4444; font-size: 0.9rem; min-height: 20px; }
 
-        /* --- تنسيق شاشة الترحيب والعداد --- */
+        /* شاشة الترحيب (مخفية افتراضياً) */
         #welcomeScreen { display: none; }
         .counter-circle {
             width: 100px; height: 100px;
@@ -91,10 +81,9 @@
         }
         .cancel-btn {
             background: transparent; border: 2px solid #555; color: #aaa;
-            font-size: 0.9rem; padding: 10px; margin-top: 15px;
-            box-shadow: none;
+            font-size: 0.9rem; padding: 10px; margin-top: 15px; width: auto;
         }
-        .cancel-btn:hover { background: #222; color: #fff; border-color: #fff; transform: none; box-shadow: none; }
+        .cancel-btn:hover { border-color: #fff; color: #fff; }
 
     </style>
 </head>
@@ -107,14 +96,14 @@
         <div id="loginForm">
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input type="text" id="code" placeholder="أدخل كود الطالب هنا" autocomplete="off">
+                <input type="text" id="code" placeholder="أدخل كود الطالب" autocomplete="off">
             </div>
             <button onclick="login()">تسجيل الدخول</button>
         </div>
 
         <div id="welcomeScreen">
             <h2 style="color:#fff; margin-bottom:5px;">مرحباً بعودتك!</h2>
-            <p style="color:var(--main); font-size:0.9rem;" id="userNamePlaceholder">جاري التحويل...</p>
+            <p style="color:var(--main); font-size:0.9rem;">جاري الدخول للمنصة...</p>
             
             <div class="counter-circle" id="countdown">5</div>
             
@@ -130,18 +119,18 @@
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        let timer; // متغير للعداد عشان نقدر نوقفه
+        let timer;
 
-        // أول ما الصفحة تفتح
         window.onload = function() {
+            // التحقق لو الطالب مسجل قبل كدة
             const savedUser = localStorage.getItem('fullmark_user');
             
             if (savedUser) {
-                // لو فيه كود محفوظ، أظهر شاشة الترحيب واخفي الدخول
+                // إظهار شاشة الترحيب وإخفاء الدخول
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('welcomeScreen').style.display = 'block';
                 
-                // بدء العد التنازلي
+                // بدء العداد التنازلي
                 let count = 5;
                 const counterEl = document.getElementById('countdown');
                 
@@ -150,20 +139,17 @@
                     counterEl.innerText = count;
                     if (count <= 0) {
                         clearInterval(timer);
-                        window.location.href = "index.html"; // تحويل للمنصة
+                        window.location.href = "index.html"; // توجيه للمنصة
                     }
                 }, 1000);
-
-            } else {
-                // لو مفيش كود، خلي شاشة الدخول هي اللي ظاهرة (الوضع الطبيعي)
             }
         };
 
         function cancelAutoLogin() {
             clearInterval(timer); // وقف العداد
-            localStorage.removeItem('fullmark_user'); // امسح الكود القديم
-            document.getElementById('welcomeScreen').style.display = 'none'; // اخفي الترحيب
-            document.getElementById('loginForm').style.display = 'block'; // اظهر الفورم
+            localStorage.removeItem('fullmark_user'); // مسح التسجيل القديم
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
         }
 
         function login() {
@@ -171,27 +157,38 @@
             const msg = document.getElementById('msg');
             const btn = document.querySelector('#loginForm button');
 
-            if(!code) { msg.innerText = "يرجى كتابة الكود!"; return; }
+            if(!code) { msg.innerText = "اكتب الكود الأول!"; return; }
             
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
             
             db.collection('codes').where('code', '==', code).get().then(snap => {
                 if(snap.empty) {
-                    msg.innerText = "هذا الكود غير مسجل أو خاطئ";
+                    msg.innerText = "الكود ده غلط أو مش موجود!";
                     btn.innerHTML = "تسجيل الدخول";
                 } else {
                     const data = snap.docs[0].data();
-                    localStorage.setItem('fullmark_user', data.code);
-                    msg.style.color = '#00ff00';
-                    msg.innerText = "تم الدخول بنجاح! جاري التحويل...";
-                    setTimeout(() => window.location.href = "index.html", 1000);
+                    
+                    // التحقق من تاريخ الانتهاء
+                    const expDate = data.expiresAt.toDate();
+                    const now = new Date();
+                    
+                    if (now > expDate) {
+                        msg.innerText = "عفواً، اشتراكك انتهى. تواصل مع الدعم.";
+                        msg.style.color = "red";
+                        btn.innerHTML = "تسجيل الدخول";
+                    } else {
+                        localStorage.setItem('fullmark_user', data.code);
+                        msg.style.color = '#00ff00';
+                        msg.innerText = "تم بنجاح! أهلاً بيك يا بطل..";
+                        setTimeout(() => window.location.href = "index.html", 1500);
+                    }
                 }
             }).catch(e => {
-                msg.innerText = "خطأ في الاتصال بالسيرفر";
+                msg.innerText = "في مشكلة في النت";
                 btn.innerHTML = "تسجيل الدخول";
             });
         }
     </script>
 </body>
-    </html>
-    
+        </html>
+        
