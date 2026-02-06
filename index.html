@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Mark Platform</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+        :root { --main: #3b82f6; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { margin: 0; font-size: 1.5rem; color: var(--main); }
+        .logout { background: #ef4444; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; border:none;}
+
+        /* Grid System */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        @media(min-width: 768px) { .grid-container { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; } }
+
+        /* Cards */
+        .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; border: 1px solid #334155; }
+        .card:hover { transform: translateY(-5px); border-color: var(--main); }
+        .card-img { width: 100%; height: 160px; object-fit: cover; }
+        .card-body { padding: 15px; text-align: center; }
+        .card-title { font-weight: bold; margin-bottom: 5px; }
+        
+        /* Teachers Specific */
+        .teacher-card .card-img { height: 180px; object-fit: cover; object-position: top; }
+        
+        /* Video Player */
+        .video-wrapper { max-width: 800px; margin: 0 auto; background: var(--card); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+        .video-info { padding: 20px; }
+        
+        /* Navigation */
+        #backBtn { display: none; background: transparent; color: white; border: 1px solid white; padding: 8px 20px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; }
+        #sectionTitle { margin-bottom: 20px; color: #94a3b8; }
+        
+        /* Loading */
+        .loader { text-align: center; padding: 50px; display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎓 Full Mark</h1>
+        <button class="logout" onclick="logout()">خروج</button>
+    </header>
+
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <button id="backBtn" onclick="goBack()">🔙 رجوع</button>
+        <h2 id="sectionTitle">المواد الدراسية</h2>
+        <div id="loader" class="loader">جاري التحميل...</div>
+        <div id="contentArea" class="grid-container"></div>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyD0Yq1TCIkjCzDJuzbWCA6XNDC4REsIJ84",
+          authDomain: "full-mark-2878d.firebaseapp.com",
+          projectId: "full-mark-2878d",
+          storageBucket: "full-mark-2878d.firebasestorage.app",
+          messagingSenderId: "793615165668",
+          appId: "1:793615165668:web:b5e0cde21901ff060d24f1"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Check Auth
+        if(!localStorage.getItem('fullmark_user')) window.location.href = "login.html";
+
+        let state = { view: 'subjects', subId: null, techId: null, folderId: null };
+        const content = document.getElementById('contentArea');
+        const title = document.getElementById('sectionTitle');
+        const backBtn = document.getElementById('backBtn');
+        const loader = document.getElementById('loader');
+
+        function showLoader(show) { 
+            loader.style.display = show ? 'block' : 'none'; 
+            content.style.display = show ? 'none' : 'grid';
+        }
+
+        // 1. Subjects
+        function loadSubjects() {
+            state.view = 'subjects';
+            backBtn.style.display = 'none';
+            title.innerText = 'المواد الدراسية';
+            content.className = 'grid-container';
+            showLoader(true);
+
+            db.collection('subjects').get().then(snap => {
+                let html = '';
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    html += `
+                        <div class="card" onclick="loadTeachers('${doc.id}', '${d.name}')">
+                            <img src="${d.image}" class="card-img" alt="${d.name}">
+                            <div class="card-body"><div class="card-title">${d.name}</div></div>
+                        </div>`;
+                });
+                content.innerHTML = html;
+                showLoader(false);
+            });
+        }
+
+        // 2. Teachers
+        window.loadTeachers = function(subId, subName) {
+            state.view = 'teachers'; state.subId = subId;
+            backBtn.style.display = 'inline-block';
+            title.innerText = `مدرسين: ${subName}`;
+            showLoader(true);
+
+            db.collection('teachers').where('subjectId', '==', subId).get().then(snap => {
+                let html = '';
+                if(snap.empty) html = '<p>لا يوجد مدرسين حالياً</p>';
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    html += `
+                        <div class="card teacher-card" onclick="loadFolders('${doc.id}', '${d.name}')">
+                            <img src="${d.image}" class="card-img" alt="${d.name}">
+                            <div class="card-body"><div class="card-title">${d.name}</div></div>
+                        </div>`;
+                });
+                content.innerHTML = html;
+                showLoader(false);
+            });
+        }
+
+        // 3. Folders
+        window.loadFolders = function(techId, techName) {
+            state.view = 'folders'; state.techId = techId;
+            title.innerText = `كورسات: ${techName}`;
+            showLoader(true);
+
+            db.collection('folders').where('teacherId', '==', techId).get().then(snap => {
+                let html = '';
+                if(snap.empty) html = '<p>لا يوجد كورسات حالياً</p>';
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    html += `
+                        <div class="card" onclick="loadVideos('${doc.id}', '${d.title}')">
+                            <img src="${d.image}" style="padding:20px; object-fit:contain;" class="card-img">
+                            <div class="card-body"><div class="card-title">${d.title}</div></div>
+                        </div>`;
+                });
+                content.innerHTML = html;
+                showLoader(false);
+            });
+        }
+
+        // 4. Videos
+        window.loadVideos = function(folderId, folderTitle) {
+            state.view = 'videos'; state.folderId = folderId;
+            title.innerText = folderTitle;
+            content.className = ''; // Remove grid for list view
+            showLoader(true);
+
+            db.collection('videos').where('folderId', '==', folderId).get().then(snap => {
+                let html = '';
+                if(snap.empty) html = '<p>لا يوجد فيديوهات</p>';
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    html += `
+                        <div class="video-wrapper">
+                            <div class="plyr__video-embed" id="player-${doc.id}">
+                                <iframe src="https://www.youtube.com/embed/${d.vid}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&rel=0" allowfullscreen allow="autoplay"></iframe>
+                            </div>
+                            <div class="video-info">
+                                <h3>${d.title}</h3>
+                                <p style="color:#94a3b8">${d.desc || ''}</p>
+                            </div>
+                        </div>`;
+                });
+                content.innerHTML = html;
+                content.style.display = 'block';
+                showLoader(false);
+                Plyr.setup('.plyr__video-embed'); // Activate Players
+            });
+        }
+
+        function goBack() {
+            if(state.view === 'videos') loadFolders(state.techId, 'الكورسات');
+            else if(state.view === 'folders') loadTeachers(state.subId, 'المدرسين');
+            else if(state.view === 'teachers') loadSubjects();
+        }
+
+        function logout() {
+            localStorage.removeItem('fullmark_user');
+            window.location.href = "login.html";
+        }
+
+        // Init
+        loadSubjects();
+    </script>
+</body>
+</html>
