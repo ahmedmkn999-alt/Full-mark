@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | Full Mark Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        body { background: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 800px; margin-top: 30px; padding-bottom: 80px; }
+        .section-box {
+            background: white; padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        h4 { color: #1e293b; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; display: inline-block; }
+        label { font-weight: bold; margin-bottom: 5px; color: #64748b; }
+        .btn-primary { background-color: #2563eb; border: none; padding: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center mb-4 fw-bold" style="color: #1e293b;">🎛️ لوحة تحكم المنصة</h2>
+
+    <div class="section-box">
+        <h4>1. تفعيل كود طالب</h4>
+        <div class="mb-3">
+            <label>الكود</label>
+            <input type="text" id="newCode" class="form-control" placeholder="مثلاً: 1010">
+        </div>
+        <button onclick="addCode()" class="btn btn-success w-100">تفعيل الكود</button>
+    </div>
+
+    <div class="section-box">
+        <h4>2. إضافة مادة</h4>
+        <div class="mb-3">
+            <label>اسم المادة</label>
+            <input type="text" id="subName" class="form-control" placeholder="مثلاً: الكيمياء">
+        </div>
+        <div class="mb-3">
+            <label>رابط الصورة</label>
+            <input type="text" id="subImg" class="form-control" placeholder="https://...">
+        </div>
+        <button onclick="addSubject()" class="btn btn-primary w-100">إضافة المادة</button>
+    </div>
+
+    <div class="section-box">
+        <h4>3. إضافة مدرس</h4>
+        <div class="mb-3">
+            <label>اختر المادة</label>
+            <select id="selSubjectForTeacher" class="form-select"></select>
+        </div>
+        <div class="mb-3">
+            <label>اسم المدرس</label>
+            <input type="text" id="techName" class="form-control" placeholder="مثلاً: أ. محمد عبدالجواد">
+        </div>
+        <div class="mb-3">
+            <label>صورة المدرس</label>
+            <input type="text" id="techImg" class="form-control" placeholder="https://...">
+        </div>
+        <button onclick="addTeacher()" class="btn btn-primary w-100">إضافة المدرس</button>
+    </div>
+
+    <div class="section-box">
+        <h4>4. إضافة كورس (مجلد)</h4>
+        <div class="row">
+            <div class="col-6 mb-3">
+                <label>المادة</label>
+                <select id="selSubjectForFolder" class="form-select" onchange="loadTeachers(this.value, 'selTeacherForFolder')"><option>اختر المادة</option></select>
+            </div>
+            <div class="col-6 mb-3">
+                <label>المدرس</label>
+                <select id="selTeacherForFolder" class="form-select"><option>اختر المدرس</option></select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label>اسم الكورس</label>
+            <input type="text" id="folderTitle" class="form-control" placeholder="مثلاً: الباب الأول">
+        </div>
+        <div class="mb-3">
+            <label>أيقونة المجلد (اختياري)</label>
+            <input type="text" id="folderImg" class="form-control" value="https://cdn-icons-png.flaticon.com/512/3767/3767084.png">
+        </div>
+        <button onclick="addFolder()" class="btn btn-primary w-100">إنشاء المجلد</button>
+    </div>
+
+    <div class="section-box">
+        <h4>5. إضافة فيديو</h4>
+        <div class="row">
+            <div class="col-4 mb-3">
+                <label>المادة</label>
+                <select id="selSubjectForVideo" class="form-select" onchange="loadTeachers(this.value, 'selTeacherForVideo')"><option>اختر...</option></select>
+            </div>
+            <div class="col-4 mb-3">
+                <label>المدرس</label>
+                <select id="selTeacherForVideo" class="form-select" onchange="loadFolders(this.value)"><option>اختر...</option></select>
+            </div>
+            <div class="col-4 mb-3">
+                <label>المجلد</label>
+                <select id="selFolderForVideo" class="form-select"><option>اختر...</option></select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label>عنوان الفيديو</label>
+            <input type="text" id="vidTitle" class="form-control" placeholder="عنوان الفيديو">
+        </div>
+        <div class="mb-3">
+            <label>ID اليوتيوب</label>
+            <input type="text" id="vidId" class="form-control" placeholder="مثال: dQw4w9WgXcQ">
+        </div>
+        <button onclick="addVideo()" class="btn btn-primary w-100">نشر الفيديو</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0Yq1TCIkjCzDJuzbWCA6XNDC4REsIJ84",
+      authDomain: "full-mark-2878d.firebaseapp.com",
+      projectId: "full-mark-2878d",
+      storageBucket: "full-mark-2878d.firebasestorage.app",
+      messagingSenderId: "793615165668",
+      appId: "1:793615165668:web:b5e0cde21901ff060d24f1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    window.onload = function() { loadSubjects(); };
+
+    function addCode() {
+        const code = document.getElementById('newCode').value;
+        db.collection('codes').add({ code: code }).then(() => alert('تم تفعيل الكود'));
+    }
+
+    function addSubject() {
+        db.collection('subjects').add({
+            name: document.getElementById('subName').value,
+            image: document.getElementById('subImg').value
+        }).then(() => { alert('تمت الإضافة'); loadSubjects(); });
+    }
+
+    function addTeacher() {
+        db.collection('teachers').add({
+            subjectId: document.getElementById('selSubjectForTeacher').value,
+            name: document.getElementById('techName').value,
+            image: document.getElementById('techImg').value
+        }).then(() => alert('تمت الإضافة'));
+    }
+
+    function addFolder() {
+        db.collection('folders').add({
+            teacherId: document.getElementById('selTeacherForFolder').value,
+            title: document.getElementById('folderTitle').value,
+            image: document.getElementById('folderImg').value
+        }).then(() => alert('تمت الإضافة'));
+    }
+
+    function addVideo() {
+        db.collection('videos').add({
+            folderId: document.getElementById('selFolderForVideo').value,
+            title: document.getElementById('vidTitle').value,
+            vid: document.getElementById('vidId').value
+        }).then(() => alert('تم النشر'));
+    }
+
+    function loadSubjects() {
+        const selects = ['selSubjectForTeacher', 'selSubjectForFolder', 'selSubjectForVideo'];
+        db.collection('subjects').get().then(snap => {
+            let html = '<option value="">اختر المادة</option>';
+            snap.forEach(doc => html += `<option value="${doc.id}">${doc.data().name}</option>`);
+            selects.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML = html; });
+        });
+    }
+
+    function loadTeachers(subId, target) {
+        db.collection('teachers').where('subjectId', '==', subId).get().then(snap => {
+            let html = '<option value="">اختر المدرس</option>';
+            snap.forEach(doc => html += `<option value="${doc.id}">${doc.data().name}</option>`);
+            document.getElementById(target).innerHTML = html;
+        });
+    }
+
+    function loadFolders(techId) {
+        db.collection('folders').where('teacherId', '==', techId).get().then(snap => {
+            let html = '<option value="">اختر المجلد</option>';
+            snap.forEach(doc => html += `<option value="${doc.id}">${doc.data().title}</option>`);
+            document.getElementById('selFolderForVideo').innerHTML = html;
+        });
+    }
+</script>
+</body>
+</html>
