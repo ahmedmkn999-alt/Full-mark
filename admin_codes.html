@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>إدارة الأكواد | Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #050505; color: #fff; font-family: 'Cairo'; padding: 20px; }
+        .box { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; }
+        input, select, button { padding: 10px; border-radius: 5px; border: none; margin: 5px; }
+        button { background: #00e1ff; cursor: pointer; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+        th { background: #222; color: #00e1ff; }
+        .active { color: #0f0; } .expired { color: #f00; }
+    </style>
+</head>
+<body>
+    <h1>🛠️ إدارة الأكواد</h1>
+    
+    <div class="box">
+        <h3>إنشاء كود جديد</h3>
+        <input type="text" id="sName" placeholder="اسم الطالب">
+        <select id="sDuration">
+            <option value="1">شهر</option>
+            <option value="3">3 شهور</option>
+            <option value="12">سنة</option>
+        </select>
+        <button onclick="genCode()">توليد وحفظ</button>
+        <div id="result" style="margin-top:10px; color:#00e1ff; font-size:1.2rem;"></div>
+    </div>
+
+    <div class="box">
+        <h3>الطلاب المسجلين</h3>
+        <table>
+            <thead><tr><th>الاسم</th><th>الكود</th><th>الانتهاء</th><th>الحالة</th><th>حذف</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
+
+        function genCode() {
+            const name = document.getElementById('sName').value;
+            const months = parseInt(document.getElementById('sDuration').value);
+            if(!name) return;
+            
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            const exp = new Date();
+            exp.setMonth(exp.getMonth() + months);
+
+            db.collection('codes').add({
+                studentName: name, code: code, expiresAt: exp, createdAt: new Date()
+            }).then(() => {
+                document.getElementById('result').innerText = `تم: ${code}`;
+                loadData();
+            });
+        }
+
+        function loadData() {
+            db.collection('codes').orderBy('createdAt', 'desc').get().then(snap => {
+                let html = '';
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const isActive = d.expiresAt.toDate() > new Date();
+                    html += `<tr>
+                        <td>${d.studentName}</td>
+                        <td style="font-family:monospace; font-size:1.1rem">${d.code}</td>
+                        <td>${d.expiresAt.toDate().toLocaleDateString('ar-EG')}</td>
+                        <td class="${isActive?'active':'expired'}">${isActive?'نشط':'منتهي'}</td>
+                        <td><button style="background:red; color:#fff" onclick="del('${doc.id}')">X</button></td>
+                    </tr>`;
+                });
+                document.getElementById('tableBody').innerHTML = html;
+            });
+        }
+        
+        function del(id) { if(confirm('حذف؟')) db.collection('codes').doc(id).delete().then(loadData); }
+        loadData();
+    </script>
+</body>
+</html>
