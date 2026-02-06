@@ -10,15 +10,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* الثيم الأزرق النيون */
-        :root { --main: #00e1ff; --bg: #02050a; --card-bg: #0a0f18; --text: #fff; }
+        /* --- الثيم الأزرق النيون --- */
+        :root { 
+            --main: #00e1ff; 
+            --bg: #02050a; 
+            --card-bg: #0a0f18; 
+            --text: #fff; 
+            --plyr-color-main: #00e1ff; /* لون المشغل */
+        }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
         
         /* الخلفية المتحركة */
-        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #000; }
 
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 15px; }
         
@@ -31,20 +37,13 @@
         }
         .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
         
-        .header-icons { display: flex; gap: 15px; align-items: center; }
-        
-        /* صورة البروفايل في الهيدر */
-        .header-profile-img {
-            width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--main);
-            object-fit: cover; cursor: pointer; transition: 0.3s;
-        }
-        .header-profile-img:hover { box-shadow: 0 0 15px var(--main); }
-
+        .header-icons { display: flex; gap: 10px; }
         .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 225, 255, 0.3);
             background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; 
             font-size: 1.1rem; cursor: pointer; transition: 0.3s;
         }
+        .icon-btn:active { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); transform: scale(0.95); }
         .logout-btn { color: #ff4444; border-color: #ff4444; }
 
         /* التنقل */
@@ -66,25 +65,50 @@
         }
         .card:active { transform: scale(0.97); border-color: var(--main); }
         
-        /* تظبيط الصور (كاملة ومش مقصوصة) */
-        .card-img-container { 
-            width: 100%; height: 180px; 
-            background: #050505; /* خلفية غامقة عشان لو الصورة مش مالية المكان */
-            display: flex; align-items: flex-start; justify-content: center;
-            overflow: hidden;
-        }
-        .card-img { 
-            width: 100%; height: 100%; 
-            object-fit: cover; /* يملأ الكارت */
-            object-position: top; /* يركز على الوش (الجزء العلوي) */
-        }
-        
+        .card-img-container { width: 100%; height: 160px; position: relative; background: #050505; display: flex; align-items: center; justify-content: center; }
+        .card-img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .card-title { padding: 12px; text-align: center; font-weight: bold; font-size: 1rem; color: #fff; background: #0f121a; border-top: 1px solid rgba(255,255,255,0.1); }
 
-        /* الفيديو */
-        .video-list { display: flex; flex-direction: column; gap: 20px; }
-        .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; }
-        .video-header { padding: 15px; background: #111; color: var(--main); font-weight: bold; font-size: 1rem; border-bottom: 1px solid #333; }
+        /* --- تصميم المشغل الفخم (Plyr Customization) --- */
+        .video-list { display: flex; flex-direction: column; gap: 25px; }
+        .video-wrapper { 
+            background: #000; border-radius: 20px; overflow: hidden; 
+            border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .video-header { 
+            padding: 15px; background: linear-gradient(90deg, #0a0f18, #111); 
+            color: var(--main); font-weight: bold; font-size: 1.1rem; 
+            border-bottom: 1px solid rgba(0, 225, 255, 0.1); 
+        }
+        
+        /* إخفاء عناصر يوتيوب */
+        .plyr__video-embed iframe { top: -50%; height: 200%; }
+        
+        /* تجميل المشغل */
+        .plyr--full-ui input[type=range] { color: var(--main); }
+        .plyr__control--overlaid { background: rgba(0, 225, 255, 0.8); color: #000; }
+        .plyr__control--overlaid:hover { background: var(--main); }
+        .plyr--video { border-radius: 0 0 20px 20px; }
+
+        /* --- كود الطالب (Watermark) --- */
+        .student-watermark {
+            position: absolute;
+            top: 20px; left: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: monospace;
+            z-index: 50;
+            pointer-events: none;
+            animation: floatWatermark 10s infinite alternate;
+            text-shadow: 0 0 5px #000;
+        }
+        @keyframes floatWatermark {
+            0% { top: 10%; left: 10%; opacity: 0.3; }
+            50% { top: 80%; left: 80%; opacity: 0.5; }
+            100% { top: 40%; left: 20%; opacity: 0.3; }
+        }
 
         /* رسالة فارغة */
         .empty-msg { text-align: center; color: #777; margin-top: 50px; font-size: 1.2rem; grid-column: 1/-1; border: 1px dashed #333; padding: 20px; border-radius: 10px; }
@@ -96,7 +120,7 @@
         
         /* البروفايل */
         .profile-img-container { position: relative; display: inline-block; margin-bottom: 15px; cursor: pointer; }
-        .modal-profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--main); padding: 3px; object-fit: cover; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--main); padding: 3px; object-fit: cover; }
         .edit-icon { position: absolute; bottom: 0; right: 0; background: var(--main); color: #000; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid #000; }
         .timer-digits { font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #fff; letter-spacing: 2px; margin-top: 10px; }
 
@@ -121,9 +145,7 @@
             <div class="logo">FULL MARK</div>
             <div class="header-icons">
                 <div class="icon-btn" onclick="openSupport()"><i class="fas fa-headset"></i></div>
-                
-                <img id="headerProfilePic" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="header-profile-img" onclick="openProfile()">
-                
+                <div class="icon-btn" onclick="openProfile()"><i class="fas fa-user"></i></div>
                 <div class="icon-btn logout-btn" onclick="logout()"><i class="fas fa-power-off"></i></div>
             </div>
         </header>
@@ -140,16 +162,13 @@
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('profileModal')">&times;</span>
-            
             <div class="profile-img-container" onclick="document.getElementById('uploadProfile').click()">
-                <img id="modalProfilePic" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="modal-profile-img">
+                <img id="userAvatar" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="profile-img">
                 <div class="edit-icon"><i class="fas fa-camera"></i></div>
             </div>
             <input type="file" id="uploadProfile" style="display: none;" accept="image/*" onchange="changeProfilePic(this)">
-
             <div style="margin-bottom: 5px;"><span id="pName" style="color:#fff; font-weight:bold; font-size: 1.3rem;">...</span></div>
             <div style="margin-bottom: 20px;"><span id="pCode" style="color:#888; font-family:monospace; background:#111; padding:3px 10px; border-radius:5px;">...</span></div>
-            
             <div style="border-top: 1px solid #333; padding-top: 15px;">
                 <div style="font-size: 0.9rem; color: #ccc;">المتبقي من الاشتراك</div>
                 <div id="countdown" class="timer-digits">00:00:00:00</div>
@@ -175,17 +194,18 @@
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
         // الخلفية
-        try { particlesJS("particles-js", { "particles": { "number": { "value": 60 }, "color": { "value": "#00e1ff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5 }, "size": { "value": 3 }, "line_linked": { "enable": true, "distance": 150, "color": "#00e1ff", "opacity": 0.2, "width": 1 }, "move": { "enable": true, "speed": 1 } } }); } catch(e){}
+        try { particlesJS("particles-js", { "particles": { "number": { "value": 60 }, "color": { "value": "#00e1ff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5 }, "size": { "value": 3 }, "line_linked": { "enable": true, "distance": 150, "color": "#00e1ff", "opacity": 0.2, "width": 1 }, "move": { "enable": true, "speed": 1 } }, "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" } } } }); } catch(e){}
 
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // البيانات النضيفة (صور ومدرسين فقط - فيديوهات لغات تانية بس)
+        // 3. البيانات الشاملة (الهيكل فقط - اللغة الثانية شغالة)
         const ALL_DATA = [
             {
                 name: "اللغة العربية", img: "https://i.postimg.cc/L6xvnk5X/mn-awl-mn-tklm-allght-alʿrbyt.jpg",
@@ -246,19 +266,39 @@
                     { name: "أحمد زهران", img: "https://files.coursatk.online/images/questions/5eab71b642c6672b9182be0d1dd887beb3c8d2b98cf2.jpg", videos: [] }
                 ]
             },
-            // اللغات الثانية (دي بس اللي شغالة)
+            // --- اللغات الثانية (فيديوهات يوتيوب شغالة) ---
             {
-                name: "اللغات الثانية", img: "https://cdn-icons-png.flaticon.com/512/3898/3898082.png",
+                name: "اللغات الثانية",
+                img: "https://cdn-icons-png.flaticon.com/512/3898/3898082.png",
                 teachers: [
-                    { name: "فرنساوي (مسيو انس)", img: "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png", videos: [{title:"الجزء 1", link:"3PC1fxpp-Xk"}] },
-                    { name: "ألماني (هير ياسين)", img: "https://i.postimg.cc/bw1hGSyS/52023310-702.jpg", videos: [{title:"التأسيس", link:"JOLc4Jc9yFU"}] },
-                    { name: "إيطالي (سنيور مدحت)", img: "https://i.postimg.cc/0NQ1VWGy/hqdefault.jpg", videos: [{title:"المنهج كامل", link:"T6hpZH5AMnk"}] },
-                    { name: "إسباني (سنيور ماجد)", img: "https://i.postimg.cc/L8jpqg95/250px-Flag-of-Spain-svg.png", videos: [{title:"شرح كامل", link:"K9ZOydc1cqs"}] }
+                    { 
+                        name: "فرنساوي (مسيو انس)", 
+                        img: "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png", 
+                        videos: [{title:"الجزء 1", link:"3PC1fxpp-Xk"}] 
+                    },
+                    { 
+                        name: "ألماني (هير ياسين)", 
+                        img: "https://i.postimg.cc/bw1hGSyS/52023310-702.jpg", 
+                        videos: [{title:"التأسيس", link:"JOLc4Jc9yFU"}] 
+                    },
+                    { 
+                        name: "إيطالي (سنيور مدحت)", 
+                        img: "https://i.postimg.cc/0NQ1VWGy/hqdefault.jpg", 
+                        videos: [{title:"المنهج كامل", link:"T6hpZH5AMnk"}] 
+                    },
+                    { 
+                        name: "إسباني (سنيور ماجد)", 
+                        img: "https://i.postimg.cc/L8jpqg95/250px-Flag-of-Spain-svg.png", 
+                        videos: [{title:"شرح كامل", link:"K9ZOydc1cqs"}] 
+                    }
                 ]
             }
         ];
 
-        // المنطق
+        // 4. منطق التطبيق
+        const userCode = localStorage.getItem('fullmark_user');
+        if(!userCode) window.location.href = "login.html";
+
         const grid = document.getElementById('gridArea');
         const title = document.getElementById('pageTitle');
         const back = document.getElementById('backBtn');
@@ -276,110 +316,23 @@
 
         // عرض المواد
         function renderSubjects() {
-            title.innerText = "المواد الدراسية"; back.style.display = 'none'; grid.className = 'grid'; viewStack = [{type: 'subjects'}];
+            title.innerText = "المواد الدراسية";
+            back.style.display = 'none';
+            grid.className = 'grid';
+            viewStack = [{type: 'subjects'}];
             grid.innerHTML = ALL_DATA.map((sub, i) => createCard(sub.name, sub.img, `renderTeachers(${i})`)).join('');
         }
 
         // عرض المدرسين
         function renderTeachers(subIdx) {
-            const sub = ALL_DATA[subIdx]; title.innerText = sub.name; back.style.display = 'block'; viewStack.push({type: 'teachers', subIdx});
+            const sub = ALL_DATA[subIdx];
+            title.innerText = sub.name;
+            back.style.display = 'block';
+            viewStack.push({type: 'teachers', subIdx});
             if(!sub.teachers || sub.teachers.length===0) { grid.innerHTML='<div class="empty-msg">قريباً</div>'; return; }
             grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.img, `renderVideos(${subIdx}, ${i})`)).join('');
         }
 
-        // عرض الفيديوهات (الوحيدة اللي شغالة هي اللغات الثانية)
+        // عرض الفيديوهات (مشغل فخم بدون يوتيوب + كود الطالب)
         function renderVideos(subIdx, teacherIdx) {
-            const teacher = ALL_DATA[subIdx].teachers[teacherIdx]; title.innerText = teacher.name; viewStack.push({type: 'videos'}); grid.className = 'video-list';
-            if(!teacher.videos || teacher.videos.length===0) { grid.innerHTML='<div class="empty-msg">قريباً</div>'; return; }
-            grid.innerHTML = teacher.videos.map((v, i) => `
-                <div class="video-wrapper">
-                    <div class="video-header">${v.title}</div>
-                    <div class="plyr__video-embed"><iframe src="https://www.youtube.com/embed/${v.link}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe></div>
-                </div>`).join('');
-        }
-
-        // الرجوع
-        function goBack() {
-            viewStack.pop(); const prev = viewStack[viewStack.length-1];
-            if(!prev) return;
-            if(prev.type === 'subjects') renderSubjects();
-            else if(prev.type === 'teachers') renderTeachers(prev.subIdx);
-        }
-
-        // --- المودال والبروفايل (تغيير الصورة في الهيدر والمودال) ---
-        function openModal(id){ document.getElementById(id).style.display='flex'; }
-        function closeModal(id){ document.getElementById(id).style.display='none'; }
-        
-        // تحميل الصورة المحفوظة
-        const savedAvatar = localStorage.getItem('user_avatar');
-        if(savedAvatar) {
-            document.getElementById('headerProfilePic').src = savedAvatar;
-            document.getElementById('modalProfilePic').src = savedAvatar;
-        }
-
-        function changeProfilePic(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const newSrc = e.target.result;
-                    document.getElementById('headerProfilePic').src = newSrc;
-                    document.getElementById('modalProfilePic').src = newSrc;
-                    localStorage.setItem('user_avatar', newSrc);
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function openProfile(){ 
-            openModal('profileModal'); 
-            const u = localStorage.getItem('fullmark_user');
-            if(u) db.collection('codes').where('code','==',u).get().then(s=>{
-                if(!s.empty) { 
-                    const d=s.docs[0].data(); 
-                    document.getElementById('pName').innerText=d.studentName; 
-                    document.getElementById('pCode').innerText=d.code; 
-                    const exp = d.expiresAt.toDate();
-                    setInterval(() => {
-                        const now = new Date().getTime();
-                        const dist = exp - now;
-                        if (dist < 0) { document.getElementById("countdown").innerText = "منتهي"; } 
-                        else {
-                            const d = Math.floor(dist / (1000 * 60 * 60 * 24));
-                            const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-                            const s = Math.floor((dist % (1000 * 60)) / 1000);
-                            document.getElementById("countdown").innerText = `${d} يوم : ${h} ساعة : ${m} دقيقة : ${s} ثانية`;
-                        }
-                    }, 1000);
-                }
-            });
-        }
-
-        // --- الشات ---
-        const userCode = localStorage.getItem('fullmark_user');
-        function openSupport() { openModal('supportModal'); loadChat(); }
-        function sendMsg() {
-            const txt = document.getElementById('chatInput').value;
-            if(!txt) return;
-            db.collection('support').doc(userCode).collection('messages').add({ text: txt, sender: 'me', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('chatInput').value = '';
-        }
-        function loadChat() {
-            const box = document.getElementById('chatBody');
-            db.collection('support').doc(userCode).collection('messages').orderBy('createdAt').onSnapshot(snap => {
-                box.innerHTML = '';
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    box.innerHTML += `<div style="overflow:hidden; width:100%;"><div class="msg ${m.sender}">${m.text}</div></div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
-        function logout() { localStorage.removeItem('fullmark_user'); window.location.href="login.html"; }
-
-        if(!localStorage.getItem('fullmark_user')) window.location.href="login.html";
-        renderSubjects();
-    </script>
-</body>
-</html>
+            const teacher = ALL_DATA[s
