@@ -2,105 +2,129 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Mark Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>المنصة | Full Mark</title>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --main: #3b82f6; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 20px; margin-bottom: 30px; }
-        h1 { margin: 0; font-size: 1.5rem; color: var(--main); }
-        .logout { background: #ef4444; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; border:none;}
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        @media(min-width: 768px) { .grid-container { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; } }
-        .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; border: 1px solid #334155; }
-        .card:hover { transform: translateY(-5px); border-color: var(--main); }
+        :root { --main: #38bdf8; --bg: #020617; --card-bg: rgba(30, 41, 59, 0.7); --text: #f0f9ff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .app-container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 15px 20px; border-radius: 16px; border: 1px solid rgba(56,189,248,0.2); margin-bottom: 30px; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--main); }
+        .profile-btn { background: rgba(56,189,248,0.1); color: var(--main); border: 1px solid var(--main); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        @media(min-width: 768px) { .grid-container { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); } }
+        .card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; backdrop-filter: blur(5px); }
+        .card:hover { transform: translateY(-5px); border-color: var(--main); box-shadow: 0 5px 15px rgba(56,189,248,0.2); }
         .card-img { width: 100%; height: 160px; object-fit: cover; }
-        .card-body { padding: 15px; text-align: center; }
-        .card-title { font-weight: bold; margin-bottom: 5px; }
-        .teacher-card .card-img { height: 180px; object-fit: cover; object-position: top; }
-        .video-wrapper { max-width: 800px; margin: 0 auto; background: var(--card); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+        .card-body { padding: 15px; text-align: center; font-weight: bold; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+        .modal-content { background: #0f172a; border: 1px solid var(--main); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; position: relative; }
+        .video-wrapper { max-width: 900px; margin: 0 auto; background: #1e293b; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
         .video-info { padding: 20px; }
+        .loader { text-align: center; padding: 50px; display: none; color: var(--main); }
         #backBtn { display: none; background: transparent; color: white; border: 1px solid white; padding: 8px 20px; border-radius: 20px; cursor: pointer; margin-bottom: 20px; }
-        #sectionTitle { margin-bottom: 20px; color: #94a3b8; }
-        .loader { text-align: center; padding: 50px; display: none; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🎓 Full Mark</h1>
-        <button class="logout" onclick="logout()">خروج</button>
-    </header>
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div id="particles-js"></div>
+    <div class="app-container">
+        <header>
+            <div class="logo">FULL MARK</div>
+            <div style="display:flex; gap:10px;">
+                <div class="profile-btn" onclick="openProfile()"><i class="fas fa-user"></i></div>
+                <div class="profile-btn" style="background:#ef4444; border-color:#ef4444; color:white;" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
+            </div>
+        </header>
+
+        <div id="profileModal" class="modal">
+            <div class="modal-content">
+                <span style="position:absolute; left:20px; top:10px; cursor:pointer; color:white; font-size:20px;" onclick="document.getElementById('profileModal').style.display='none'">&times;</span>
+                <h3 style="color:var(--main); margin-bottom:20px;">الملف الشخصي</h3>
+                <p>الطالب: <span id="pName" style="color:var(--main)">...</span></p>
+                <p>الكود: <span id="pCode" style="color:var(--main)">...</span></p>
+                <p>الانتهاء: <span id="pExp" style="color:var(--main)">...</span></p>
+            </div>
+        </div>
+
         <button id="backBtn" onclick="goBack()">🔙 رجوع</button>
-        <h2 id="sectionTitle">المواد الدراسية</h2>
-        <div id="loader" class="loader">جاري التحميل...</div>
+        <h2 id="sectionTitle" style="margin-bottom:20px; border-right:4px solid var(--main); padding-right:10px;">المواد الدراسية</h2>
+        <div id="loader" class="loader"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>
         <div id="contentArea" class="grid-container"></div>
     </div>
+
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        particlesJS("particles-js", { "particles": { "number": { "value": 50 }, "color": { "value": "#38bdf8" }, "shape": { "type": "circle" }, "opacity": { "value": 0.3, "random": true }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.1, "width": 1 }, "move": { "enable": true, "speed": 1 } } });
+        
         const firebaseConfig = {
             apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds",
             authDomain: "full-mark-8d434.firebaseapp.com",
             projectId: "full-mark-8d434",
             storageBucket: "full-mark-8d434.firebasestorage.app",
             messagingSenderId: "802579483999",
-            appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea",
-            measurementId: "G-26F9W89TB8"
+            appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        if(!localStorage.getItem('fullmark_user')) window.location.href = "login.html";
+        const userCode = localStorage.getItem('fullmark_user');
+        if(!userCode) window.location.href = "login.html";
 
-        let state = { view: 'subjects', subId: null, techId: null, folderId: null };
+        let state = { view: 'subjects', subId: null, techId: null };
         const content = document.getElementById('contentArea');
-        const title = document.getElementById('sectionTitle');
-        const backBtn = document.getElementById('backBtn');
         const loader = document.getElementById('loader');
 
+        function openProfile() {
+            document.getElementById('profileModal').style.display = 'flex';
+            db.collection('codes').where('code', '==', userCode).get().then(snap => {
+                if(!snap.empty) {
+                    const d = snap.docs[0].data();
+                    document.getElementById('pName').innerText = d.studentName;
+                    document.getElementById('pCode').innerText = d.code;
+                    document.getElementById('pExp').innerText = d.expiresAt.toDate().toLocaleDateString('ar-EG');
+                }
+            });
+        }
         function showLoader(show) { loader.style.display = show ? 'block' : 'none'; content.style.display = show ? 'none' : 'grid'; }
-
+        
         function loadSubjects() {
-            state.view = 'subjects'; backBtn.style.display = 'none'; title.innerText = 'المواد الدراسية'; content.className = 'grid-container'; showLoader(true);
+            state.view = 'subjects'; document.getElementById('backBtn').style.display='none'; document.getElementById('sectionTitle').innerText='المواد الدراسية'; content.className='grid-container'; showLoader(true);
             db.collection('subjects').get().then(snap => {
-                let html = '';
-                snap.forEach(doc => { const d = doc.data(); html += `<div class="card" onclick="loadTeachers('${doc.id}', '${d.name}')"><img src="${d.image}" class="card-img"><div class="card-body"><div class="card-title">${d.name}</div></div></div>`; });
-                content.innerHTML = html; showLoader(false);
+                let html = ''; snap.forEach(doc => { const d=doc.data(); html+=`<div class="card" onclick="loadTeachers('${doc.id}','${d.name}')"><img src="${d.image}" class="card-img"><div class="card-body">${d.name}</div></div>`; });
+                content.innerHTML = html || '<p>لا يوجد مواد</p>'; showLoader(false);
             });
         }
-        window.loadTeachers = function(subId, subName) {
-            state.view = 'teachers'; state.subId = subId; backBtn.style.display = 'inline-block'; title.innerText = `مدرسين: ${subName}`; showLoader(true);
-            db.collection('teachers').where('subjectId', '==', subId).get().then(snap => {
-                let html = ''; if(snap.empty) html = '<p>لا يوجد مدرسين</p>';
-                snap.forEach(doc => { const d = doc.data(); html += `<div class="card teacher-card" onclick="loadFolders('${doc.id}', '${d.name}')"><img src="${d.image}" class="card-img"><div class="card-body"><div class="card-title">${d.name}</div></div></div>`; });
-                content.innerHTML = html; showLoader(false);
+        window.loadTeachers = function(id, name) {
+            state.view = 'teachers'; state.subId = id; document.getElementById('backBtn').style.display='inline-block'; document.getElementById('sectionTitle').innerText=`مدرسين: ${name}`; showLoader(true);
+            db.collection('teachers').where('subjectId','==',id).get().then(snap => {
+                let html = ''; snap.forEach(doc => { const d=doc.data(); html+=`<div class="card" onclick="loadFolders('${doc.id}','${d.name}')"><img src="${d.image}" class="card-img"><div class="card-body">${d.name}</div></div>`; });
+                content.innerHTML = html || '<p>لا يوجد مدرسين</p>'; showLoader(false);
             });
         }
-        window.loadFolders = function(techId, techName) {
-            state.view = 'folders'; state.techId = techId; title.innerText = `كورسات: ${techName}`; showLoader(true);
-            db.collection('folders').where('teacherId', '==', techId).get().then(snap => {
-                let html = ''; if(snap.empty) html = '<p>لا يوجد كورسات</p>';
-                snap.forEach(doc => { const d = doc.data(); html += `<div class="card" onclick="loadVideos('${doc.id}', '${d.title}')"><img src="${d.image}" style="padding:20px; object-fit:contain;" class="card-img"><div class="card-body"><div class="card-title">${d.title}</div></div></div>`; });
-                content.innerHTML = html; showLoader(false);
+        window.loadFolders = function(id, name) {
+            state.view = 'folders'; state.techId = id; document.getElementById('sectionTitle').innerText=`كورسات: ${name}`; showLoader(true);
+            db.collection('folders').where('teacherId','==',id).get().then(snap => {
+                let html = ''; snap.forEach(doc => { const d=doc.data(); html+=`<div class="card" onclick="loadVideos('${doc.id}','${d.title}')"><img src="${d.image}" class="card-img" style="object-fit:contain; padding:20px;"><div class="card-body">${d.title}</div></div>`; });
+                content.innerHTML = html || '<p>لا يوجد كورسات</p>'; showLoader(false);
             });
         }
-        window.loadVideos = function(folderId, folderTitle) {
-            state.view = 'videos'; state.folderId = folderId; title.innerText = folderTitle; content.className = ''; showLoader(true);
-            db.collection('videos').where('folderId', '==', folderId).get().then(snap => {
-                let html = ''; if(snap.empty) html = '<p>لا يوجد فيديوهات</p>';
-                snap.forEach(doc => { const d = doc.data(); html += `<div class="video-wrapper"><div class="plyr__video-embed" id="player-${doc.id}"><iframe src="https://www.youtube.com/embed/${d.vid}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&rel=0" allowfullscreen allow="autoplay"></iframe></div><div class="video-info"><h3>${d.title}</h3></div></div>`; });
-                content.innerHTML = html; content.style.display = 'block'; showLoader(false); Plyr.setup('.plyr__video-embed');
+        window.loadVideos = function(id, name) {
+            state.view = 'videos'; state.folderId = id; document.getElementById('sectionTitle').innerText=name; content.className=''; showLoader(true);
+            db.collection('videos').where('folderId','==',id).get().then(snap => {
+                let html = ''; snap.forEach(doc => { const d=doc.data(); html+=`<div class="video-wrapper"><div class="plyr__video-embed"><iframe src="https://www.youtube.com/embed/${d.vid}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&rel=0" allowfullscreen allow="autoplay"></iframe></div><div class="video-info"><h3 style="color:var(--main)">${d.title}</h3></div></div>`; });
+                content.innerHTML = html || '<p>لا يوجد فيديوهات</p>'; content.style.display='block'; showLoader(false); Plyr.setup('.plyr__video-embed');
             });
         }
-        function goBack() {
-            if(state.view === 'videos') loadFolders(state.techId, 'الكورسات');
-            else if(state.view === 'folders') loadTeachers(state.subId, 'المدرسين');
-            else if(state.view === 'teachers') loadSubjects();
-        }
-        function logout() { localStorage.removeItem('fullmark_user'); window.location.href = "login.html"; }
+        function goBack() { if(state.view==='videos') loadFolders(state.techId,'الكورسات'); else if(state.view==='folders') loadTeachers(state.subId,'المدرسين'); else loadSubjects(); }
+        function logout() { localStorage.removeItem('fullmark_user'); window.location.href="login.html"; }
         loadSubjects();
     </script>
 </body>
