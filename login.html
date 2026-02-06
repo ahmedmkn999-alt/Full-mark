@@ -1,108 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login | FULL MARK</title>
+    <title>تسجيل الدخول | Full Mark</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: #020617; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }
-        #particles-js { position: absolute; width: 100%; height: 100%; z-index: 1; background-image: radial-gradient(circle at center, #1e40af 0%, #020617 70%); }
-        .login-container { position: relative; z-index: 10; text-align: center; width: 90%; max-width: 400px; padding: 20px; }
-        .brand-title { font-size: 3.5rem; font-weight: 900; color: #e0f2fe; text-transform: uppercase; text-shadow: 0 0 20px #0ea5e9, 0 0 40px #0284c7; margin-bottom: 30px; letter-spacing: 2px; animation: glow 2s infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 10px #0ea5e9, 0 0 20px #0ea5e9; } to { text-shadow: 0 0 20px #38bdf8, 0 0 40px #38bdf8; } }
-        .glass-box { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 20px; padding: 40px 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5); }
-        .input-group { margin-bottom: 25px; }
-        input { width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; color: #fff; font-size: 1.1rem; text-align: center; outline: none; transition: 0.3s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-        input::placeholder { color: #94a3b8; }
-        input:focus { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); border: none; border-radius: 12px; color: white; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); text-transform: uppercase; }
+        
+        body {
+            background-color: #020617; /* نفس لون خلفية المنصة */
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: #f0f9ff;
+        }
+
+        /* خلفية الانيميشن */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            /* تدرج خفيف جداً عشان يدي عمق للأسود */
+            background-image: radial-gradient(circle at center, #111827 0%, #020617 80%);
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .brand-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #38bdf8; /* أزرق تلجي */
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .glass-box {
+            /* خلفية غامقة شفافة */
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.3); /* حدود زرقاء */
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            transition: 0.3s;
+        }
+        
+        .glass-box:hover {
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 25px;
+            background: #020617; /* خلفية سوداء للحقل */
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            color: #38bdf8; /* النص أزرق */
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input::placeholder { color: #475569; font-weight: normal; }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        }
+
         button:active { transform: scale(0.98); }
-        #errorMsg { color: #f87171; margin-top: 15px; font-size: 0.9rem; display: none; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
-        @media (min-width: 768px) { .brand-title { font-size: 4.5rem; } .glass-box { padding: 50px 40px; } }
+        button:hover { box-shadow: 0 0 25px rgba(14, 165, 233, 0.5); }
+
+        #errorMsg {
+            color: #f87171;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        @media (min-width: 768px) { .brand-title { font-size: 4.5rem; } }
     </style>
 </head>
 <body>
+
     <div id="particles-js"></div>
+
     <div class="login-container">
         <h1 class="brand-title">FULL MARK</h1>
         <div class="glass-box">
-            <div class="input-group">
-                <input type="text" id="studentCode" placeholder="أدخل الكود الخاص بك" autocomplete="off">
-            </div>
+            <input type="text" id="studentCode" placeholder="أدخل الكود الخاص بك" autocomplete="off">
             <button onclick="login()">دخول</button>
             <div id="errorMsg"></div>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
     <script>
+        // إعدادات البارتيكلز (أزرق في أسود)
         particlesJS("particles-js", {
-            "particles": { "number": { "value": 80 }, "color": { "value": "#38bdf8" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.2, "width": 1 }, "move": { "enable": true, "speed": 2 } },
-            "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } }, "retina_detect": true
+            "particles": {
+                "number": { "value": 60 },
+                "color": { "value": "#38bdf8" }, // لون تلجي
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.3, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1 }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } }
+            },
+            "retina_detect": true
         });
 
+        // إعدادات Firebase الجديدة
         const firebaseConfig = {
             apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds",
             authDomain: "full-mark-8d434.firebaseapp.com",
             projectId: "full-mark-8d434",
             storageBucket: "full-mark-8d434.firebasestorage.app",
             messagingSenderId: "802579483999",
-            appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea",
-            measurementId: "G-26F9W89TB8"
+            appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea"
         };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         async function login() {
-            const codeInput = document.getElementById('studentCode');
-            const code = codeInput.value.trim();
+            const code = document.getElementById('studentCode').value.trim();
             const errorMsg = document.getElementById('errorMsg');
             const btn = document.querySelector('button');
-            
+
             if (!code) return;
 
-            btn.innerHTML = '<span style="opacity:0.8">جاري التحقق...</span>';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
             errorMsg.style.display = 'none';
 
             try {
-                const snapshot = await db.collection('codes').where('code', '==', code).get();
+                const snap = await db.collection('codes').where('code', '==', code).get();
 
-                if (snapshot.empty) {
-                    showError("الكود غير صحيح!");
-                    return;
+                if (snap.empty) {
+                    throw new Error("الكود غير صحيح!");
                 }
 
-                const doc = snapshot.docs[0];
-                const data = doc.data();
+                const doc = snap.docs[0];
+                const d = doc.data();
                 const now = new Date();
-                const expiryDate = data.expiresAt ? data.expiresAt.toDate() : new Date();
+                const expiryDate = d.expiresAt ? d.expiresAt.toDate() : new Date();
 
-                if (data.status === 'banned') {
-                    showError("تم حظر هذا الحساب");
-                    return;
+                if (d.status === 'banned') {
+                    throw new Error("عذراً، تم حظر هذا الحساب.");
                 }
 
-                if (data.status === 'expired' || now > expiryDate) {
-                    if(data.status !== 'expired') db.collection('codes').doc(doc.id).update({ status: 'expired' });
-                    showError("انتهت صلاحية الكود");
-                    return;
+                if (d.status === 'expired' || now > expiryDate) {
+                    if(d.status !== 'expired') {
+                        db.collection('codes').doc(doc.id).update({ status: 'expired' });
+                    }
+                    throw new Error("انتهت صلاحية هذا الكود.");
                 }
 
+                // دخول ناجح
                 localStorage.setItem('fullmark_user', code);
                 window.location.href = "index.html"; 
 
-            } catch (error) {
-                console.error(error);
-                showError("خطأ! تأكد من الانترنت أو إعدادات Rules في فايربيز");
-            }
-
-            function showError(msg) {
-                errorMsg.innerText = msg;
+            } catch (err) {
+                console.error(err);
+                errorMsg.innerText = err.message || "حدث خطأ في الاتصال";
                 errorMsg.style.display = 'block';
                 btn.innerText = "دخول";
             }
