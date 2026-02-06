@@ -10,42 +10,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- الثيم الأزرق النيون --- */
+        /* --- التصميم الأزرق النيون --- */
         :root { --main: #00e1ff; --bg: #02050a; --card-bg: #0a0f18; --text: #fff; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
-        
-        /* الخلفية المتحركة */
-        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #000; }
+        /* الخلفية الثابتة (أمان 100% ضد الشاشة السوداء) */
+        body { 
+            background: linear-gradient(135deg, #02050a 0%, #050a14 100%);
+            color: var(--text); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
 
-        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 15px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 15px; }
         
         /* الهيدر */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
             background: rgba(10, 15, 24, 0.95); border-bottom: 2px solid var(--main);
             padding: 10px 20px; border-radius: 20px; margin-bottom: 25px; 
-            box-shadow: 0 0 30px rgba(0, 225, 255, 0.15); backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 225, 255, 0.1);
         }
-        .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
+        .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-shadow: 0 0 10px rgba(0, 225, 255, 0.5); }
         
-        .header-icons { display: flex; gap: 12px; align-items: center; }
+        .header-icons { display: flex; gap: 10px; align-items: center; }
         
         /* صورة البروفايل في الهيدر */
         .header-profile-img {
             width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--main);
-            object-fit: cover; cursor: pointer; transition: 0.3s;
+            object-fit: cover; cursor: pointer;
         }
         .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 225, 255, 0.3);
             background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+            font-size: 1.1rem; cursor: pointer; transition: 0.2s;
         }
+        .icon-btn:active { transform: scale(0.9); background: var(--main); color: #000; }
         .logout-btn { color: #ff4444; border-color: #ff4444; }
 
-        /* التنقل */
+        /* العنوان وزر الرجوع */
         .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         h2 { font-size: 1.4rem; color: var(--main); border-right: 4px solid var(--main); padding-right: 12px; margin: 0; }
         #backBtn { 
@@ -54,19 +58,27 @@
         }
 
         /* الشبكة */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; min-height: 200px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; } }
 
+        /* الكارت */
         .card { 
             background: var(--card-bg); border: 1px solid rgba(0, 225, 255, 0.15); border-radius: 15px; 
-            overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
+            overflow: hidden; cursor: pointer; transition: 0.2s; position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .card:active { transform: scale(0.97); border-color: var(--main); }
         
-        /* 🔥 الصور كاملة ونضيفة 🔥 */
-        .card-img-container { width: 100%; height: 150px; position: relative; background: #0a0f18; display: flex; align-items: center; justify-content: center; padding: 10px; }
-        .card-img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px rgba(0,225,255,0.3)); }
+        /* 🔥 إصلاح الصور (كاملة 100%) 🔥 */
+        .card-img-container { 
+            width: 100%; height: 170px; 
+            background: #000; /* خلفية سوداء ورا الصورة */
+            display: flex; align-items: center; justify-content: center;
+        }
+        .card-img { 
+            max-width: 100%; max-height: 100%; 
+            object-fit: contain; /* الصورة تظهر كاملة بدون قص */
+        }
         
         .card-title { padding: 12px; text-align: center; font-weight: bold; font-size: 1rem; color: #fff; background: #0f121a; border-top: 1px solid rgba(255,255,255,0.1); }
 
@@ -78,7 +90,7 @@
         /* رسالة فارغة */
         .empty-msg { text-align: center; color: #777; margin-top: 50px; font-size: 1.2rem; grid-column: 1/-1; border: 1px dashed #333; padding: 20px; border-radius: 10px; }
 
-        /* أدمن مخفي */
+        /* لوحة التحكم المخفية */
         #adminView { display: none; background: #000; padding: 20px; border-radius: 20px; border: 1px solid #333; margin-bottom: 20px; }
         .admin-input { background: #222; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 5px; width: 100%; margin-bottom: 10px; }
 
@@ -101,19 +113,16 @@
         .msg.support { background: #222; color: #fff; align-self: flex-start; border: 1px solid #333; border-bottom-right-radius: 2px; }
         .chat-input-area { display: flex; gap: 10px; align-items: center; background: #111; padding: 10px; border-radius: 50px; border: 1px solid #333; }
         .chat-input { flex: 1; border: none; background: transparent; color: #fff; outline: none; padding: 5px; font-size: 1rem; }
-        .send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--main); border: none; cursor: pointer; color: #000; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .send-btn:active { transform: scale(0.9); }
+        .send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--main); border: none; cursor: pointer; color: #000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
-
-    <div id="particles-js"></div>
 
     <div class="container">
         <header>
             <div class="logo">FULL MARK</div>
             <div class="header-icons">
-                <div class="icon-btn admin-btn" onclick="toggleAdmin()" style="border-color:#ff9900; color:#ff9900;"><i class="fas fa-cog"></i></div>
+                <div class="icon-btn" onclick="toggleAdmin()" style="border-color:#ff9900; color:#ff9900;"><i class="fas fa-cog"></i></div>
                 <div class="icon-btn" onclick="openSupport()"><i class="fas fa-headset"></i></div>
                 <img id="headerProfilePic" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="header-profile-img" onclick="openProfile()">
                 <div class="icon-btn logout-btn" onclick="logout()"><i class="fas fa-power-off"></i></div>
@@ -158,9 +167,7 @@
             <span class="close" onclick="closeModal('supportModal')">&times;</span>
             <h3 style="color:var(--main); margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">الدعم الفني</h3>
             <div class="chat-box">
-                <div class="chat-msgs" id="chatBody">
-                    <div style="text-align:center; color:#555; margin-top:50px;">ابدأ المحادثة معنا...</div>
-                </div>
+                <div class="chat-msgs" id="chatBody"></div>
                 <div class="chat-input-area">
                     <input type="text" id="chatInput" class="chat-input" placeholder="اكتب رسالتك..." onkeypress="if(event.keyCode==13) sendMsg()">
                     <button class="send-btn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
@@ -169,74 +176,52 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // الخلفية
-        try { particlesJS("particles-js", { "particles": { "number": { "value": 60 }, "color": { "value": "#00e1ff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5 }, "size": { "value": 3 }, "line_linked": { "enable": true, "distance": 150, "color": "#00e1ff", "opacity": 0.2, "width": 1 }, "move": { "enable": true, "speed": 1 } }, "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" } } } }); } catch(e){}
-
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // 3. البيانات الشاملة (استخدمنا صور أيقونات مضمونة عشان مفيش حاجة تضرب)
+        // 🔥 البيانات الأصلية بالصور الحقيقية 🔥
         const ALL_DATA = [
             {
-                name: "اللغة العربية", img: "https://cdn-icons-png.flaticon.com/512/3206/3206014.png",
-                teachers: [{ name: "أ. محمد صلاح", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }, { name: "أ. رضا الفاروق", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "اللغة العربية", img: "https://i.postimg.cc/L6xvnk5X/mn-awl-mn-tklm-allght-alʿrbyt.jpg",
+                teachers: [{ name: "أ. محمد صلاح", img: "https://i.postimg.cc/ZRJy8gDR/FB-IMG-1770382315133.jpg", videos: [] }, { name: "أ. رضا الفاروق", img: "https://i.postimg.cc/c4Pg965p/1723904748-y-CL9UA.png", videos: [] }]
             },
             {
-                name: "اللغة الإنجليزية", img: "https://cdn-icons-png.flaticon.com/512/3269/3269817.png",
-                teachers: [{ name: "عبقري لغة", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }, { name: "شريف المصري", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "اللغة الإنجليزية", img: "https://i.postimg.cc/TwvBCjry/characteristics-of-a-prestigious-language-school-1-1020x642-1.jpg",
+                teachers: [{ name: "عبقري لغة", img: "https://i.postimg.cc/85CzPV0d/mr-tarek-hero-section-f2bf4f0e2cf0c8b0d728.png", videos: [] }, { name: "شريف المصري", img: "https://i.postimg.cc/4nRGtCBW/loginbg.png", videos: [] }, { name: "مي مجدي", img: "https://i.postimg.cc/DzS7tcJs/FB-IMG-1770382635144.jpg", videos: [] }, { name: "انجلشاوي", img: "https://i.postimg.cc/X7q1K1Td/splashs1.png", videos: [] }]
             },
             {
-                name: "الفيزياء", img: "https://cdn-icons-png.flaticon.com/512/2933/2933886.png",
-                teachers: [{ name: "محمد عبد المعبود", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "الفيزياء", img: "https://i.postimg.cc/Z5RBj2mp/904.jpg",
+                teachers: [{ name: "محمد عبد المعبود", img: "https://i.postimg.cc/fRTXpkcm/FB_IMG_1770383335913.jpg", videos: [] }, { name: "مستر كيرلس", img: "https://i.postimg.cc/qR0pD6nd/FB-IMG-1770383231786.jpg", videos: [] }, { name: "محمود مجدي", img: "https://i.postimg.cc/wjGVkDCy/Magdy_Image_ab6042b951be2cb6297e.png", videos: [] }, { name: "حسام خليل", img: "https://i.postimg.cc/pL6ZBKwm/c3_21a0b369.png", videos: [] }]
             },
             {
-                name: "الكيمياء", img: "https://cdn-icons-png.flaticon.com/512/995/995447.png",
-                teachers: [{ name: "خالد صقر", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }, { name: "أ. محمد عبدالجواد", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "الكيمياء", img: "https://i.postimg.cc/Njz4xR3j/4a228f61e5d6843a9ddd56e6cc39ef6d.jpg",
+                teachers: [{ name: "خالد صقر", img: "https://i.postimg.cc/hGQ0Zfn9/teacher_Bflsmq_Qf.webp", videos: [] }, { name: "أ. محمد عبدالجواد", img: "https://i.postimg.cc/rpR9ZKTR/c78ffbf64a791da67752132a9aaf7c8f127fc4f4.jpg", videos: [] }, { name: "عبدالله حبشي", img: "https://i.postimg.cc/MGfY3vwV/hero_light.webp", videos: [] }, { name: "عمرو الصيفي", img: "https://i.postimg.cc/5tQmK6Jm/FB_IMG_1770384007129.jpg", videos: [] }, { name: "جون جهبذ", img: "https://i.postimg.cc/3w0Zfdh9/gahbaz_hero_section_main_character_308fc2da8ff8bae443d4.webp", videos: [] }]
             },
             {
-                name: "الأحياء", img: "https://cdn-icons-png.flaticon.com/512/2920/2920329.png",
-                teachers: [{ name: "د.أحمد الجوهري", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "الأحياء", img: "https://i.postimg.cc/cJjdZkVx/FB_IMG_1770384472698.jpg",
+                teachers: [{ name: "د.أحمد الجوهري", img: "https://i.postimg.cc/XJC4vcbq/89549ee43b7a31c4f350f0d32a116fbd02313c37.png", videos: [] }, { name: "محمد أيمن", img: "https://i.postimg.cc/856NCBS7/profile_433b1d2b5e7bfd30bed5.png", videos: [] }, { name: "أحمد رضوان", img: "https://i.postimg.cc/fbFMZq6L/FB_IMG_1770384659581.jpg", videos: [] }, { name: "جيو ماجد", img: "https://i.postimg.cc/pd7PxcgR/FB_IMG_1770384621215.jpg", videos: [] }, { name: "سامح أحمد", img: "https://i.postimg.cc/g05Gdtf2/FB-IMG-1770384584699.jpg", videos: [] }]
             },
             {
-                name: "الرياضيات", img: "https://cdn-icons-png.flaticon.com/512/2965/2965335.png",
-                teachers: [{ name: "م.احمد عصام", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "الرياضيات", img: "https://i.postimg.cc/yN0LYkGR/m-dah-alryadyat-alzamyt-fy-brytanya-ll-khd-balaqtsad-qdma.jpg",
+                teachers: [{ name: "م.احمد عصام", img: "https://i.postimg.cc/fyRCK5RJ/essam_dark.png", videos: [] }, { name: "م. لطفي زهران", img: "https://i.postimg.cc/sXywB3Fh/Lotfy_a940b4e08c6abf7a6821.png", videos: [] }]
             },
             {
-                name: "الجغرافيا", img: "https://cdn-icons-png.flaticon.com/512/921/921490.png",
-                teachers: [{ name: "جمعة السيد", img: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", videos: [] }]
+                name: "الجغرافيا", img: "https://files.coursatk.online/images/subjects/geography.png",
+                teachers: [{ name: "جمعة السيد", img: "https://files.coursatk.online/images/content/2b233a89685a724df18a65c7b2ba6a3263f2932b3e8a.jpg", videos: [] }, { name: "أحمد زهران", img: "https://files.coursatk.online/images/questions/5eab71b642c6672b9182be0d1dd887beb3c8d2b98cf2.jpg", videos: [] }]
             },
-            // --- اللغات الثانية (فيديوهات شغالة) ---
             {
-                name: "اللغات الثانية",
-                img: "https://cdn-icons-png.flaticon.com/512/3898/3898082.png",
+                name: "اللغات الثانية", img: "https://cdn-icons-png.flaticon.com/512/3898/3898082.png",
                 teachers: [
-                    { 
-                        name: "فرنساوي (مسيو انس)", 
-                        img: "https://cdn-icons-png.flaticon.com/512/330/330490.png", 
-                        videos: [{title:"الجزء 1", link:"3PC1fxpp-Xk"}] 
-                    },
-                    { 
-                        name: "ألماني (هير ياسين)", 
-                        img: "https://cdn-icons-png.flaticon.com/512/330/330523.png", 
-                        videos: [{title:"التأسيس", link:"JOLc4Jc9yFU"}] 
-                    },
-                    { 
-                        name: "إيطالي (سنيور مدحت)", 
-                        img: "https://cdn-icons-png.flaticon.com/512/330/330669.png", 
-                        videos: [{title:"المنهج كامل", link:"T6hpZH5AMnk"}] 
-                    },
-                    { 
-                        name: "إسباني (سنيور ماجد)", 
-                        img: "https://cdn-icons-png.flaticon.com/512/330/330557.png", 
-                        videos: [{title:"شرح كامل", link:"K9ZOydc1cqs"}] 
-                    }
+                    { name: "فرنساوي (مسيو انس)", img: "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png", videos: [{title:"الجزء 1", link:"3PC1fxpp-Xk"}] },
+                    { name: "ألماني (هير ياسين)", img: "https://i.postimg.cc/bw1hGSyS/52023310-702.jpg", videos: [{title:"التأسيس", link:"JOLc4Jc9yFU"}] },
+                    { name: "إيطالي (سنيور مدحت)", img: "https://i.postimg.cc/0NQ1VWGy/hqdefault.jpg", videos: [{title:"المنهج كامل", link:"T6hpZH5AMnk"}] },
+                    { name: "إسباني (سنيور ماجد)", img: "https://i.postimg.cc/L8jpqg95/250px-Flag-of-Spain-svg.png", videos: [{title:"شرح كامل", link:"K9ZOydc1cqs"}] }
                 ]
             }
         ];
@@ -245,8 +230,7 @@
         const grid = document.getElementById('gridArea');
         const title = document.getElementById('pageTitle');
         const back = document.getElementById('backBtn');
-        
-        let state = { view: 'subjects', subIdx: null };
+        let viewStack = [];
 
         function createCard(title, img, onclick) {
             return `
@@ -260,67 +244,43 @@
 
         // عرض المواد
         function renderSubjects() {
-            state.view = 'subjects';
-            title.innerText = "المواد الدراسية";
-            back.style.display = 'none';
-            grid.className = 'grid';
+            title.innerText = "المواد الدراسية"; back.style.display = 'none'; grid.className = 'grid'; viewStack = [{type: 'subjects'}];
             grid.innerHTML = ALL_DATA.map((sub, i) => createCard(sub.name, sub.img, `renderTeachers(${i})`)).join('');
         }
 
         // عرض المدرسين
         function renderTeachers(subIdx) {
-            state.view = 'teachers';
-            state.subIdx = subIdx;
-            
-            const sub = ALL_DATA[subIdx];
-            title.innerText = sub.name;
-            back.style.display = 'inline-block';
-            
-            if(!sub.teachers || sub.teachers.length === 0) {
-                grid.innerHTML = '<div class="empty-msg">قريباً</div>';
-                return;
-            }
+            const sub = ALL_DATA[subIdx]; title.innerText = sub.name; back.style.display = 'block'; viewStack.push({type: 'teachers', subIdx});
+            if(!sub.teachers || sub.teachers.length===0) { grid.innerHTML='<div class="empty-msg">قريباً</div>'; return; }
             grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.img, `renderVideos(${subIdx}, ${i})`)).join('');
         }
 
         // عرض الفيديوهات
         function renderVideos(subIdx, teacherIdx) {
-            state.view = 'videos';
-            const teacher = ALL_DATA[subIdx].teachers[teacherIdx];
-            title.innerText = teacher.name;
-            grid.className = 'video-list';
-
-            if(!teacher.videos || teacher.videos.length === 0) {
-                grid.innerHTML = '<div class="empty-msg">قريباً..</div>';
-                return;
-            }
-
+            const teacher = ALL_DATA[subIdx].teachers[teacherIdx]; title.innerText = teacher.name; viewStack.push({type: 'videos'}); grid.className = 'video-list';
+            if(!teacher.videos || teacher.videos.length===0) { grid.innerHTML='<div class="empty-msg">قريباً..</div>'; return; }
             grid.innerHTML = teacher.videos.map((v, i) => `
                 <div class="video-wrapper">
                     <div class="video-header">${v.title}</div>
-                    <div class="plyr__video-embed" id="player-${i}">
-                        <iframe src="https://www.youtube.com/embed/${v.link}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
-                    </div>
-                </div>
-            `).join('');
-
-            // Plyr
-            setTimeout(() => {
-                Array.from(document.querySelectorAll('.plyr__video-embed')).map(p => new Plyr(p));
-            }, 500);
+                    <div class="plyr__video-embed"><iframe src="https://www.youtube.com/embed/${v.link}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe></div>
+                </div>`).join('');
+            
+            setTimeout(() => { Array.from(document.querySelectorAll('.plyr__video-embed')).map(p => new Plyr(p)); }, 500);
         }
 
         // الرجوع
         function goBack() {
-            if(state.view === 'videos') renderTeachers(state.subIdx);
-            else if(state.view === 'teachers') renderSubjects();
+            if(viewStack.length > 1) {
+                viewStack.pop(); const prev = viewStack[viewStack.length - 1];
+                if(prev.type === 'subjects') renderSubjects();
+                else if(prev.type === 'teachers') renderTeachers(prev.subIdx);
+            }
         }
 
         // --- المودال والبروفايل ---
         function openModal(id){ document.getElementById(id).style.display='flex'; }
         function closeModal(id){ document.getElementById(id).style.display='none'; }
         
-        // تحميل الصورة المحفوظة
         const savedAvatar = localStorage.getItem('user_avatar');
         if(savedAvatar) {
             document.getElementById('headerProfilePic').src = savedAvatar;
@@ -342,4 +302,45 @@
 
         function openProfile(){ 
             openModal('profileModal'); 
-            const
+            const u = localStorage.getItem('fullmark_user');
+            if(u) db.collection('codes').where('code','==',u).get().then(s=>{
+                if(!s.empty) { const d=s.docs[0].data(); document.getElementById('pName').innerText=d.studentName; document.getElementById('pCode').innerText=d.code; const exp = d.expiresAt.toDate(); setInterval(() => { const now = new Date().getTime(); const dist = exp - now; if (dist < 0) { document.getElementById("countdown").innerText = "منتهي"; } else { const d = Math.floor(dist / (1000 * 60 * 60 * 24)); const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)); const s = Math.floor((dist % (1000 * 60)) / 1000); document.getElementById("countdown").innerText = `${d} يوم : ${h} ساعة : ${m} دقيقة : ${s} ثانية`; } }, 1000); }
+            });
+        }
+
+        // --- الشات ---
+        const userCode = localStorage.getItem('fullmark_user');
+        function openSupport() { openModal('supportModal'); loadChat(); }
+        function sendMsg() {
+            const txt = document.getElementById('chatInput').value;
+            if(!txt) return;
+            db.collection('support').doc(userCode).collection('messages').add({ text: txt, sender: 'me', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            db.collection('support').doc(userCode).set({ studentName: document.getElementById('pName').innerText || 'طالب', studentCode: userCode, lastMessage: txt, lastUpdate: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+            document.getElementById('chatInput').value = '';
+        }
+        function loadChat() {
+            const box = document.getElementById('chatBody');
+            db.collection('support').doc(userCode).collection('messages').orderBy('createdAt').onSnapshot(snap => {
+                box.innerHTML = '';
+                snap.forEach(doc => { const m = doc.data(); box.innerHTML += `<div style="overflow:hidden; width:100%;"><div class="msg ${m.sender}">${m.text}</div></div>`; });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        // --- أدمن ---
+        function toggleAdmin() { const v = document.getElementById('adminView'); v.style.display = v.style.display === 'none' ? 'block' : 'none'; }
+        function genCode() {
+            const name = document.getElementById('stdName').value;
+            if(!name) return;
+            const code = Math.floor(100000 + Math.random()*900000).toString();
+            const exp = new Date(); exp.setMonth(exp.getMonth()+1);
+            db.collection('codes').add({studentName: name, code: code, expiresAt: exp, createdAt: new Date()}).then(()=>{ document.getElementById('codeResult').innerText = code; });
+        }
+
+        function logout() { localStorage.removeItem('fullmark_user'); window.location.href="login.html"; }
+
+        if(!localStorage.getItem('fullmark_user')) window.location.href="login.html";
+        renderSubjects();
+    </script>
+</body>
+</html>
