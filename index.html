@@ -6,88 +6,88 @@
     <title>Full Mark | المنصة</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --main: #00e1ff; --bg: #020617; --card: #0f172a; --text: #fff; }
+        /* الألوان: أسود ملكي */
+        :root { --main: #ffffff; --bg: #000000; --card: #111111; --text: #ffffff; --accent: #333; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
         
-        /* الخلفية */
-        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        /* الخلفية المتحركة (واضحة جداً) */
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.6; pointer-events: none; }
         
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 20px; }
         
         /* الهيدر */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(15, 23, 42, 0.95); border-bottom: 2px solid var(--main);
+            background: rgba(20,20,20,0.9); border: 1px solid #333; 
             padding: 15px 20px; border-radius: 20px; margin-bottom: 30px; 
-            backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0, 225, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px);
         }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.6); }
+        .logo { font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         
-        .header-icons { display: flex; gap: 10px; }
         .icon-btn {
-            width: 45px; height: 45px; border-radius: 50%; border: 1px solid #333; 
+            width: 45px; height: 45px; border-radius: 50%; border: 1px solid #444; 
             background: #000; color: #fff; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+            font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-left: 8px;
         }
-        .icon-btn:hover { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); transform: scale(1.1); }
-        .icon-btn.logout { border-color: #ef4444; color: #ef4444; }
-        .icon-btn.logout:hover { background: #ef4444; color: #fff; box-shadow: 0 0 20px #ef4444; }
+        .icon-btn:hover { background: #fff; color: #000; transform: scale(1.1); }
+        .icon-btn.logout { color: #f00; border-color: #500; }
+        .icon-btn.logout:hover { background: #f00; color: #fff; }
 
         /* الشبكة */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; } }
+        @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; } }
 
         .card { 
-            background: var(--card); border: 1px solid #1e293b; border-radius: 20px; overflow: hidden; 
-            position: relative; transition: 0.4s; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: var(--card); border: 1px solid #222; border-radius: 25px; overflow: hidden; 
+            position: relative; transition: 0.4s; cursor: pointer;
         }
-        .card:hover { transform: translateY(-7px); border-color: var(--main); box-shadow: 0 0 25px rgba(0, 225, 255, 0.2); }
+        .card:hover { transform: translateY(-7px); border-color: #fff; box-shadow: 0 10px 40px rgba(255,255,255,0.1); }
         
-        /* التعامل الذكي مع الصور */
-        .card-img-container { width: 100%; height: 180px; position: relative; background: #000; overflow: hidden; }
+        .card-img-container { width: 100%; height: 220px; position: relative; background: #050505; overflow: hidden; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0; } 
         .card-img.loaded { opacity: 1; }
         
+        /* البديل النصي للصورة */
         .img-fallback {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(45deg, #0f172a, #1e293b);
-            color: var(--main); font-size: 1.5rem; font-weight: bold;
-            text-align: center; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #111; color: #fff;
         }
+        .img-fallback i { font-size: 3rem; margin-bottom: 10px; color: #555; }
+        .img-fallback span { font-weight: bold; font-size: 1.2rem; color: #ccc; padding: 0 10px; text-align: center; }
 
         .card-title { 
             padding: 15px; text-align: center; font-weight: 800; font-size: 1.1rem; 
-            background: #0f172a; border-top: 1px solid #1e293b; color: #fff;
+            background: #151515; border-top: 1px solid #222; color: #fff;
         }
-
-        /* المودال */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #0f172a; border: 1px solid var(--main); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; text-align: center; box-shadow: 0 0 50px rgba(0,225,255,0.2); display: flex; flex-direction: column; max-height: 80vh; }
-        .close-btn { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 24px; cursor: pointer; z-index: 10; }
-        
-        /* الشات */
-        .chat-msgs { flex: 1; overflow-y: auto; padding: 10px; background: #020617; border: 1px solid #1e293b; border-radius: 10px; margin-bottom: 10px; min-height: 200px; }
-        .msg { padding: 8px 12px; margin-bottom: 8px; border-radius: 8px; display: inline-block; max-width: 85%; font-size: 0.9rem; }
-        .msg.me { background: var(--main); color: #000; float: left; clear: both; font-weight: bold; }
-        .msg.support { background: #333; color: #fff; float: right; clear: both; }
-        .chat-input { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #333; color: #fff; border-radius: 50px; outline: none; }
 
         /* الفيديو */
         .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; margin-bottom: 20px; }
-        .video-header { padding: 15px; background: #1e293b; color: var(--main); font-weight: bold; text-align: center; }
+        .video-header { padding: 15px; background: #111; color: #fff; font-weight: bold; text-align: center; border-bottom: 1px solid #222; }
 
         /* التنقل */
         .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        h2 { border-right: 5px solid var(--main); padding-right: 15px; font-size: 1.6rem; margin: 0; color: #fff; }
-        #backBtn { display: none; background: #1e293b; color: var(--main); border: 1px solid var(--main); padding: 8px 25px; border-radius: 50px; cursor: pointer; transition: 0.3s; }
-        #backBtn:hover { background: var(--main); color: #000; }
+        h2 { border-right: 5px solid #fff; padding-right: 15px; font-size: 1.8rem; margin: 0; color: #fff; }
+        #backBtn { display: none; background: #fff; color: #000; border: none; padding: 8px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        
+        /* المودال */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-box { background: #111; border: 1px solid #444; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8); display: flex; flex-direction: column; max-height: 80vh; }
+        .close-btn { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 24px; cursor: pointer; z-index: 10; }
+        
+        /* الشات */
+        .chat-msgs { flex: 1; overflow-y: auto; padding: 10px; background: #000; border: 1px solid #222; border-radius: 10px; margin-bottom: 10px; min-height: 200px; }
+        .msg { padding: 10px 15px; margin-bottom: 8px; border-radius: 8px; display: inline-block; max-width: 85%; font-size: 0.95rem; }
+        .msg.me { background: #fff; color: #000; float: left; clear: both; font-weight: bold; }
+        .msg.support { background: #222; color: #fff; float: right; clear: both; border: 1px solid #444; }
+        .chat-input { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 50px; outline: none; }
     </style>
 </head>
 <body>
@@ -97,7 +97,7 @@
     <div class="container">
         <header>
             <div class="logo">FULL MARK</div>
-            <div class="header-icons">
+            <div style="display:flex;">
                 <div class="icon-btn" onclick="openSupport()"><i class="fas fa-headset"></i></div>
                 <div class="icon-btn" onclick="openProfile()"><i class="fas fa-user"></i></div>
                 <div class="icon-btn logout" onclick="logout()"><i class="fas fa-power-off"></i></div>
@@ -115,23 +115,23 @@
     <div id="profileModal" class="modal-overlay">
         <div class="modal-box">
             <i class="fas fa-times close-btn" onclick="closeModal('profileModal')"></i>
-            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" style="width:100px; border-radius:50%; border:3px solid var(--main); margin:0 auto 15px;">
-            <h3 id="pName" style="color:#fff;">جاري التحميل...</h3>
-            <div id="pCode" style="color:var(--main); font-family:monospace; font-size:1.2rem; margin:10px 0;">...</div>
-            <p id="pExp" style="color:#888; font-size:0.9rem;">...</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" style="width:100px; border-radius:50%; border:3px solid #fff; margin:0 auto 15px; padding:3px;">
+            <h3 id="pName" style="color:#fff; margin-bottom:10px;">جاري التحميل...</h3>
+            <div id="pCode" style="color:#aaa; font-family:monospace; font-size:1.2rem; background:#222; padding:5px 15px; border-radius:10px; display:inline-block;">...</div>
+            <p id="pExp" style="color:#666; font-size:0.9rem; margin-top:10px;">...</p>
         </div>
     </div>
 
     <div id="supportModal" class="modal-overlay">
         <div class="modal-box" style="height: 500px;">
             <i class="fas fa-times close-btn" onclick="closeModal('supportModal')"></i>
-            <h3 style="color:var(--main); margin-bottom:15px;">الدعم الفني</h3>
+            <h3 style="color:#fff; margin-bottom:15px;">الدعم الفني</h3>
             <div class="chat-msgs" id="chatBody">
-                <div style="text-align:center; color:#555; margin-top:50px;">كيف يمكننا مساعدتك؟</div>
+                <div style="text-align:center; color:#555; margin-top:50px;">مرحباً بك في الدعم الفني</div>
             </div>
             <div style="display:flex; gap:10px;">
                 <input type="text" id="chatInput" class="chat-input" placeholder="اكتب رسالتك...">
-                <button onclick="sendMsg()" style="width:45px; height:45px; border-radius:50%; background:var(--main); border:none; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+                <button onclick="sendMsg()" style="width:45px; height:45px; border-radius:50%; background:#fff; border:none; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -143,16 +143,27 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // 1. الخلفية
-        particlesJS("particles-js", { "particles": { "number": { "value": 80 }, "color": { "value": "#00e1ff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5 }, "size": { "value": 3 }, "line_linked": { "enable": true, "distance": 150, "color": "#00e1ff", "opacity": 0.2, "width": 1 }, "move": { "enable": true, "speed": 2 } }, "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" } } } });
+        // 1. تشغيل الخلفية (تم الإصلاح)
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 60 },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.3 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1 }
+            },
+            "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" } } }
+        });
 
         // 2. Firebase
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
-        firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        // 3. البيانات الشاملة (المصححة والمدمجة)
+        // 3. البيانات الشاملة (JSON المدمج)
         const ALL_DATA = [
-            // --- بيانات JSON اللي بعتها (تم التصحيح والدمج) ---
             {
                 subject_name: "لغة عربية",
                 image_url: "https://files.coursatk.online/images/questions/c91723a0f73a35ed26c7c35a47d99f7e02c66e55b552.jpg",
@@ -200,7 +211,7 @@
                     }
                 ]
             },
-            // --- اللغات الثانية (أضيفت يدوياً) ---
+            // --- اللغات الثانية ---
             {
                 subject_name: "لغة فرنسية",
                 image_url: "https://i.postimg.cc/NjRcy2s0/a75e136b-7909-485f-95e8-862fddd2c0bc.png",
@@ -208,9 +219,7 @@
                     {
                         name: "مسيو انس السعيد",
                         image_url: "https://i.postimg.cc/sDdy3JyV/lhctmi-Qt-ANEg0PDcec-CE1QTCqr-Kza-Eq-GZ6s-Zt-MJ4.jpg",
-                        chapters: [
-                            { chapter_name: "المنهج", lectures: [{ lecture_name: "3 ثانوي", videos: [{ video_name: "الجزء الأول", links: [{ url: "https://www.youtube.com/watch?v=3PC1fxpp-Xk" }] }] }] }
-                        ]
+                        chapters: [ { chapter_name: "المنهج", lectures: [{ lecture_name: "3 ثانوي", videos: [{ video_name: "الجزء الأول", links: [{ url: "https://www.youtube.com/watch?v=3PC1fxpp-Xk" }] }] }] } ]
                     }
                 ]
             },
@@ -221,15 +230,13 @@
                     {
                         name: "هير ياسين",
                         image_url: "https://i.postimg.cc/MHkkKzCd/hqdefault-(1).jpg",
-                        chapters: [
-                            { chapter_name: "التأسيس", lectures: [{ lecture_name: "المحاضرة 1", videos: [{ video_name: "البداية", links: [{ url: "https://www.youtube.com/watch?v=JOLc4Jc9yFU" }] }] }] }
-                        ]
+                        chapters: [ { chapter_name: "التأسيس", lectures: [{ lecture_name: "المحاضرة 1", videos: [{ video_name: "البداية", links: [{ url: "https://www.youtube.com/watch?v=JOLc4Jc9yFU" }] }] }] } ]
                     }
                 ]
             }
         ];
 
-        // 4. منطق التشغيل
+        // 4. منطق التطبيق
         const userCode = localStorage.getItem('fullmark_user');
         if(!userCode) window.location.href = "login.html";
 
@@ -238,13 +245,12 @@
         const back = document.getElementById('backBtn');
         let viewStack = [];
 
-        // دالة الكروت
-        function createCard(title, img, onclickFn) {
+        function createCard(title, imgUrl, onclickFn, icon) {
             return `
             <div class="card" onclick="${onclickFn}">
                 <div class="card-img-container">
-                    <div class="img-fallback"><i class="fas fa-layer-group"></i><br>${title}</div>
-                    <img src="${img}" class="card-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
+                    <div class="img-fallback"><i class="fas ${icon}"></i><span>${title}</span></div>
+                    <img src="${imgUrl}" class="card-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
                 </div>
                 <div class="card-title">${title}</div>
             </div>`;
@@ -257,7 +263,7 @@
             grid.className = 'grid';
             viewStack = [{type: 'subjects'}];
             
-            grid.innerHTML = ALL_DATA.map((sub, i) => createCard(sub.subject_name, sub.image_url, `renderTeachers(${i})`)).join('');
+            grid.innerHTML = ALL_DATA.map((sub, i) => createCard(sub.subject_name, sub.image_url, `renderTeachers(${i})`, 'fa-book')).join('');
         }
 
         // 2. عرض المدرسين
@@ -267,24 +273,16 @@
             back.style.display = 'block';
             viewStack.push({type: 'teachers', subIdx: subIdx});
             
-            if (!sub.teachers || sub.teachers.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#aaa;">قريباً</p>';
-                return;
-            }
-            grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.image_url, `renderChapters(${subIdx}, ${i})`)).join('');
+            grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.image_url, `renderChapters(${subIdx}, ${i})`, 'fa-chalkboard-teacher')).join('');
         }
 
-        // 3. عرض الفصول/الشباتر
+        // 3. عرض الفصول
         function renderChapters(subIdx, techIdx) {
             const teacher = ALL_DATA[subIdx].teachers[techIdx];
             title.innerText = teacher.name;
             viewStack.push({type: 'chapters', subIdx, techIdx});
             
-            if (!teacher.chapters || teacher.chapters.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#aaa;">لا يوجد محتوى</p>';
-                return;
-            }
-            grid.innerHTML = teacher.chapters.map((c, i) => createCard(c.chapter_name, '', `renderLectures(${subIdx}, ${techIdx}, ${i})`)).join('');
+            grid.innerHTML = teacher.chapters.map((c, i) => createCard(c.chapter_name, '', `renderLectures(${subIdx}, ${techIdx}, ${i})`, 'fa-folder')).join('');
         }
 
         // 4. عرض المحاضرات
@@ -293,10 +291,10 @@
             title.innerText = chapter.chapter_name;
             viewStack.push({type: 'lectures', subIdx, techIdx, chapIdx});
             
-            grid.innerHTML = chapter.lectures.map((l, i) => createCard(l.lecture_name, '', `renderVideos(${subIdx}, ${techIdx}, ${chapIdx}, ${i})`)).join('');
+            grid.innerHTML = chapter.lectures.map((l, i) => createCard(l.lecture_name, '', `renderVideos(${subIdx}, ${techIdx}, ${chapIdx}, ${i})`, 'fa-video')).join('');
         }
 
-        // 5. عرض الفيديو
+        // 5. عرض الفيديوهات
         function renderVideos(subIdx, techIdx, chapIdx, lectIdx) {
             const lecture = ALL_DATA[subIdx].teachers[techIdx].chapters[chapIdx].lectures[lectIdx];
             title.innerText = lecture.lecture_name;
@@ -315,7 +313,7 @@
             setTimeout(() => {
                 lecture.videos.forEach((v, i) => {
                     const video = document.getElementById(`player-${i}`);
-                    const source = v.links[0].url; // تشغيل أول جودة
+                    const source = v.links[0].url;
                     
                     if (source.includes('youtube')) {
                         document.getElementById(`player-wrap-${i}`).innerHTML = `<iframe src="https://www.youtube.com/embed/${source.split('v=')[1]}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>`;
@@ -323,19 +321,19 @@
                         const hls = new Hls();
                         hls.loadSource(source);
                         hls.attachMedia(video);
+                        new Plyr(video);
                     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                         video.src = source;
+                        new Plyr(video);
                     }
-                    new Plyr(video);
                 });
             }, 100);
         }
 
-        // زر الرجوع
+        // الرجوع
         function goBack() {
-            viewStack.pop(); // Remove current view
+            viewStack.pop();
             const prev = viewStack[viewStack.length - 1];
-            
             if (prev.type === 'subjects') renderSubjects();
             else if (prev.type === 'teachers') renderTeachers(prev.subIdx);
             else if (prev.type === 'chapters') renderChapters(prev.subIdx, prev.techIdx);
@@ -349,4 +347,13 @@
         function openProfile() {
             openModal('profileModal');
             db.collection('codes').where('code', '==', userCode).get().then(snap => {
-            
+                if(!snap.empty) {
+                    const d = snap.docs[0].data();
+                    document.getElementById('pName').innerText = d.studentName;
+                    document.getElementById('pCode').innerText = d.code;
+                    document.getElementById('pExp').innerText = "ينتهي: " + d.expiresAt.toDate().toLocaleDateString('ar-EG');
+                }
+            });
+        }
+
+        
