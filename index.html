@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Full Mark | المنصة</title>
+    <title>المنصة | Full Mark</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -71,7 +71,10 @@
         .chat-input { width: 80%; padding: 10px; border-radius: 50px; border: none; outline: none; background: #222; color: #fff; }
         .chat-send { width: 18%; padding: 10px; border-radius: 50px; border: none; background: var(--main); cursor: pointer; font-weight: bold; }
 
+        /* الفيديو */
         .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; margin-bottom: 20px; }
+        .video-header { padding: 15px; background: #111; border-bottom: 1px solid #222; color: var(--main); font-weight: bold; display: flex; align-items: center; justify-content: space-between; }
+        
         .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
         h2 { border-right: 5px solid var(--main); padding-right: 15px; font-size: 1.8rem; margin: 0; }
         #backBtn { display: none; background: #222; color: var(--main); border: 1px solid var(--main); padding: 8px 25px; border-radius: 50px; cursor: pointer; }
@@ -122,85 +125,138 @@
     </div>
 
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // 1. البيانات (صور مضمونة)
+        // --- 1. البيانات الضخمة (مدمجة) ---
         const DATA = [
-            {
-                name: "اللغة العربية",
-                img: "https://placehold.co/600x400/000/00e1ff?text=اللغة+العربية&font=roboto",
-                teachers: [
-                    { name: "أ. محمد صلاح", img: "https://placehold.co/400x400/111/fff?text=محمد+صلاح", folders: [{name:"شرح المنهج", videos:[{title:"محاضرة 1", link:"dQw4w9WgXcQ"}]}] },
-                    { name: "أ. رضا الفاروق", img: "https://placehold.co/400x400/111/fff?text=رضا+الفاروق", folders: [] }
+          {
+            name: "لغة عربية",
+            img: "https://files.coursatk.online/images/questions/c91723a0f73a35ed26c7c35a47d99f7e02c66e55b552.jpg",
+            teachers: [
+              {
+                name: "أ.محمد صلاح",
+                img: "https://files.coursatk.online/images/questions/abc2fcc42883dd1a9e93021922da73dc92ff4b40ec76.jpg",
+                folders: [
+                  {
+                    name: "الشهر الأول",
+                    videos: [
+                      { title: "المحاضرة الأولى: النحو - المبتدأ والخبر", link: "https://river-5-545.rtbcdn.ru/hls-vod/lMLIGlXXPat9W2owCUKuWw/1770646511/3320/0x5000c500e9daa4c6/c24ad275e16e460e8f576a81bf0d7ba5.mp4.m3u8" },
+                      { title: "المحاضرة الأولى: تدريبات النحو", link: "https://river-4-408.rtbcdn.ru/hls-vod/qdH6WZRQ3JFTORURp6p3XQ/1770495006/3300/0x5000c500e9ebeda0/53cfd16b80ba4906a971b900342fda56.mp4.m3u8" },
+                      { title: "المحاضرة الأولى: الأدب - الكلاسيكية", link: "https://river-5-554.rtbcdn.ru/hls-vod/1ZxXO6yUAYubNz9iuqRsZg/1770665380/3358/0x5000c500fa77c05c/724a5005e0794f1db5e6b027aa11372b.mp4.m3u8" },
+                      { title: "المحاضرة الثانية: كان وأخواتها", link: "https://river-4-423.rtbcdn.ru/hls-vod/diCXmj7MH1qQPGI3dFBrLQ/1770482585/3314/0x5000c500e9c92040/9bc2abaa0044472ea9ca39c392fa081b.mp4.m3u8" },
+                      { title: "المحاضرة الثالثة: كاد وأخواتها", link: "https://river-3-371.rtbcdn.ru/hls-vod/KqbKdT0sv1mT85_Kbn_PLw/1770749273/3330/0x5000c500e9cf2358/f571fcf376494930bea015bc9cadbf7e.mp4.m3u8" },
+                      { title: "المحاضرة الرابعة: إن وأخواتها", link: "https://river-3-311.rtbcdn.ru/hls-vod/umYDERmekbAEySQ-fpNLSg/1770754155/1859/0x5000c500e5355c8d/40a94330705f42368aacd04b1b3c56f4.mp4.m3u8" }
+                    ]
+                  },
+                  {
+                    name: "الشهر الثاني",
+                    videos: [
+                      { title: "المحاضرة الخامسة: لا النافية للجنس", link: "https://river-3-3102.rtbcdn.ru/hls-vod/0DoYrjhdequQpFqkCGZGqg/1770738286/2662/0x5000039ce870376d/e8a57271b3f9499fa9026633e25963b5.mp4.m3u8" },
+                      { title: "المحاضرة السادسة: الضمائر", link: "https://river-5-542.rtbcdn.ru/hls-vod/P3Bk_hZJ51rkxeSXovoRsA/1770744821/3310/0x5000c500e9ebd7b8/6f863f97e74946f2b63d0050e216d00b.mp4.m3u8" },
+                      { title: "المحاضرة السابعة: إعمال اسم الفاعل", link: "https://river-3-354.rtbcdn.ru/hls-vod/KycIz577oKobqvbKXcEd1A/1770671092/3272/0x5000c500e9ebedbd/4120803379d3480fa9cd5f27bc03055a.mp4.m3u8" }
+                    ]
+                  },
+                  {
+                    name: "معسكر 4 - 1",
+                    videos: [
+                      { title: "المهمة الأولى: شرح النحو", link: "https://river-4-429.rtbcdn.ru/hls-vod/pY6nkzrcG4lHcv1P_FKB1w/1770639813/3322/0x5000c500e9ebd5af/7ed17944068f431bbc6a44ed612999bd.mp4.m3u8" },
+                      { title: "المهمة الثانية: شرح النحو", link: "https://river-4-420.rtbcdn.ru/hls-vod/VDXp-j7-rTwHVhLZ53Wtrg/1770580080/3296/0x5000c500e9d380e7/7872988c522e4ad3a33f2c3ae4c7575c.mp4.m3u8" },
+                      { title: "المهمة الثالثة: شرح النحو", link: "https://river-5-545.rtbcdn.ru/hls-vod/MvB-qsKFRvKri6g0flUgug/1770747317/1867/0x5000c500e5357e39/8d5cd1e0618c4cffaa4a3b47aeed77eb.mp4.m3u8" }
+                    ]
+                  }
                 ]
-            },
-            {
-                name: "اللغة الإنجليزية",
-                img: "https://placehold.co/600x400/000/00e1ff?text=English",
-                teachers: [
-                    { name: "عبقري لغة", img: "https://placehold.co/400x400/111/fff?text=عبقري+لغة", folders: [] },
-                    { name: "م. شريف المصري", img: "https://placehold.co/400x400/111/fff?text=شريف+المصري", folders: [] }
+              }
+            ]
+          },
+          {
+            name: "رياضة",
+            img: "https://files.coursatk.online/images/subjects/math.png",
+            teachers: [
+              {
+                name: "م.احمد عصام",
+                img: "https://files.coursatk.online/images/questions/954b4af4a74f55705aa828d1e05adf6a84a41c5a5fba.jpg",
+                folders: [
+                  {
+                    name: "كورس الديناميكا",
+                    videos: [
+                      { title: "الحصة الأولى (ديناميكا)", link: "https://river-3-379.rtbcdn.ru/hls-vod/06STGPfnWguOTNuFlMZgMQ/1770751943/2618/0x5000039ce868e9d9/22b8200bea934ba5a9dd9774119704a2.mp4.m3u8" },
+                      { title: "الحصة الثانية (ديناميكا)", link: "https://river-3-383.rtbcdn.ru/hls-vod/d_x-9KbZLBv-OuIoWfLM3w/1770733572/2454/0x5000c500e883936f/1aeea61e0a904699a0fb4c2a548728d0.mp4.m3u8" }
+                    ]
+                  },
+                  {
+                    name: "باقي التفاضل والتكامل",
+                    videos: [
+                      { title: "تكامل 1: شرح", link: "https://river-3-362.rtbcdn.ru/hls-vod/vWxNTZYMFGBT15oz-sebYQ/1770561552/3358/0x5000c500fa774e8d/960e46404820454dbd3e68322cf9f50f.mp4.m3u8" },
+                      { title: "تكامل 2: شرح", link: "https://river-5-556.rtbcdn.ru/hls-vod/FwobGIZU2QunUGqWqACdqA/1770663785/2734/0x5000039ce86390f1/b0f533b374eb43239164af0c187979b8.mp4.m3u8" },
+                      { title: "تكامل 3: شرح", link: "https://river-4-431.rtbcdn.ru/hls-vod/zUlHRwiMGDY4unvHvG7X9Q/1770654599/2221/0x5000c5007446bdca/7a0e25b229d3450a83d6ebf5f8b078f5.mp4.m3u8" }
+                    ]
+                  }
                 ]
-            },
-            {
-                name: "الفيزياء",
-                img: "https://placehold.co/600x400/000/00e1ff?text=الفيزياء",
-                teachers: [
-                    { name: "أ. محمد عبد المعبود", img: "https://placehold.co/400x400/111/fff?text=عبد+المعبود", folders: [] },
-                    { name: "دكتور كيرلس", img: "https://placehold.co/400x400/111/fff?text=د+كيرلس", folders: [] }
+              },
+              {
+                name: "م. لطفي زهران",
+                img: "https://files.coursatk.online/images/questions/e058a83e533993956c70599fb7d611f340ae22be9503.jpg",
+                folders: [
+                  {
+                    name: "معسكر الفراغية",
+                    videos: [
+                      { title: "معسكر شرح فرع الفراغية", link: "https://river-3-343.rtbcdn.ru/hls-vod/q2gpG37FzyJ0GlwCyYCAxg/1770654567/3290/0x5000c500fa6e36fa/b184d50653474fb4b3c5e2dd9e391798.mp4.m3u8" },
+                      { title: "حل تدريبات معسكر الفراغية", link: "https://river-3-336.rtbcdn.ru/hls-vod/r7gQU5AH1tEXNz5_QINzVQ/1770758779/3296/0x5000c500e9cfc190/935607162e374e1a8dbc598ff5f32f5b.mp4.m3u8" }
+                    ]
+                  },
+                  {
+                    name: "معسكر التفاضل",
+                    videos: [
+                      { title: "معسكر شرح وحل تفاضل (وحدة 1)", link: "https://river-4-438.rtbcdn.ru/hls-vod/o_7aNJq0wlu2b0NBv-IewQ/1770575338/3328/0x5000c500e9cf20fb/1c675b2e1dcc47a8a1e2094ecec08f01.mp4.m3u8" },
+                      { title: "معسكر شرح تفاضل (وحدة 2)", link: "https://river-5-544.rtbcdn.ru/hls-vod/wWM0JpOqXk5SJ7N9hSJTKg/1770605991/3296/0x5000c500e9cf557b/618d4ce2cecb4e38af33d7f46ca70848.mp4.m3u8" }
+                    ]
+                  },
+                  {
+                    name: "الاستاتيكا",
+                    videos: [
+                      { title: "متطلبات قبلية ج1", link: "https://river-3-388.rtbcdn.ru/hls-vod/mG1x7qQoPT78B0KIqFR7ow/1770819273/2508/0x5000039ce86869e1/77b1ce0172484deaae9bba26e3bddbc3.mp4.m3u8" },
+                      { title: "عزم قوة بالنسبة لنقطتين", link: "https://river-3-348.rtbcdn.ru/hls-vod/BPen5U0X8esT1WEFhFh3GA/1770821516/1871/0x5000c500e4db1142/90d178e160bb4000bf398766810d9ec5.mp4.m3u8" }
+                    ]
+                  }
                 ]
-            },
-            {
-                name: "الكيمياء",
-                img: "https://placehold.co/600x400/000/00e1ff?text=الكيمياء",
-                teachers: [
-                    { name: "أ. خالد صقر", img: "https://placehold.co/400x400/111/fff?text=خالد+صقر", folders: [] },
-                    { name: "أ. محمد عبدالجواد", img: "https://placehold.co/400x400/111/fff?text=عبدالجواد", folders: [] }
+              }
+            ]
+          },
+          {
+            name: "جغرافيا",
+            img: "https://files.coursatk.online/images/subjects/geography.png",
+            teachers: [
+              {
+                name: "جمعة السيد",
+                img: "https://files.coursatk.online/images/content/2b233a89685a724df18a65c7b2ba6a3263f2932b3e8a.jpg",
+                folders: [
+                  {
+                    name: "الشهر الخامس",
+                    videos: [
+                      { title: "المشكلات الاجتماعية كامل", link: "https://river-3-312.rtbcdn.ru/hls-vod/qEmQG7_j9IxPTD7tdyYxsg/1770826539/3326/0x5000c500e9d3839b/2db0791c39644f7abb18f9ad9922b096.mp4.m3u8" },
+                      { title: "المشكلات الاقتصادية", link: "https://river-5-554.rtbcdn.ru/hls-vod/I8h6fTlXKQd8REfpxukpVg/1770731271/1905/0x5000c500e539f15d/c7108a5eb57e46bfab705dde7a6128d2.mp4.m3u8" },
+                      { title: "تطور خريطة العالم ج1", link: "https://river-5-532.rtbcdn.ru/hls-vod/_ScVitDjdoWHji-KguloLw/1770601593/3394/0x5000c500fa6e4b9f/2b940af9feff4635b15843d6a8055e00.mp4.m3u8" }
+                    ]
+                  }
                 ]
-            },
-            {
-                name: "الفرنساوي",
-                img: "https://placehold.co/600x400/000/00e1ff?text=French",
-                teachers: [
-                    { name: "مسيو انس السعيد", img: "https://placehold.co/400x400/111/fff?text=أنس+السعيد", folders: [
-                        {name: "شرح المنهج", videos: [
-                            {title: "جزء 1 تالتة ثانوي", link: "3PC1fxpp-Xk"},
-                            {title: "جزء 2 تالتة ثانوي", link: "fVJTHj5YW7Y"},
-                            {title: "جزء 3 تالتة ثانوي", link: "Afx9AHypc7M"},
-                            {title: "الجزء الاخير", link: "6s_TWiP1KgQ"}
-                        ]}
-                    ]}
+              },
+              {
+                name: "أحمد زهران",
+                img: "https://files.coursatk.online/images/questions/5eab71b642c6672b9182be0d1dd887beb3c8d2b98cf2.jpg",
+                folders: [
+                  {
+                    name: "الشهر الخامس",
+                    videos: [
+                      { title: "شرح الحصة 18", link: "https://river-3-349.rtbcdn.ru/hls-vod/1RzkI1YooRj0A-Owz-NrUw/1770670174/1786/0x5000c500c5826c38/3a39fffdc58949a8b2d362b76afbe4c5.mp4.m3u8" },
+                      { title: "شرح الحصة 17", link: "https://river-5-528.rtbcdn.ru/hls-vod/Ymg2QbGAwPBarF-khhx9cw/1770837062/3398/0x5000c500fa6e8c72/cc4e141eeeef485f8997d330a3d400fc.mp4.m3u8" }
+                    ]
+                  }
                 ]
-            },
-            {
-                name: "الألماني",
-                img: "https://placehold.co/600x400/000/00e1ff?text=German",
-                teachers: [
-                    { name: "هير ياسين", img: "https://placehold.co/400x400/111/fff?text=هير+ياسين", folders: [
-                        {name: "كورس التأسيس", videos: [{title: "المحاضرة الأولى", link: "JOLc4Jc9yFU"}]}
-                    ]}
-                ]
-            },
-            {
-                name: "الإيطالي",
-                img: "https://placehold.co/600x400/000/00e1ff?text=Italian",
-                teachers: [
-                    { name: "سنيور مدحت", img: "https://placehold.co/400x400/111/fff?text=مدحت", folders: [
-                        {name: "المراجعة النهائية", videos: [{title: "المنهج كاملاً", link: "T6hpZH5AMnk"}]}
-                    ]}
-                ]
-            },
-            {
-                name: "الإسباني",
-                img: "https://placehold.co/600x400/000/00e1ff?text=Spanish",
-                teachers: [
-                    { name: "سنيور ماجد فارس", img: "https://placehold.co/400x400/111/fff?text=ماجد+فارس", folders: [
-                        {name: "مراجعات", videos: [{title: "شرح كامل للمنهج", link: "K9ZOydc1cqs"}]}
-                    ]}
-                ]
-            }
+              }
+            ]
+          }
         ];
 
         // 2. إعدادات Firebase
@@ -239,7 +295,6 @@
             const sub = DATA[idx];
             title.innerText = "مدرسين " + sub.name;
             back.style.display = 'block';
-            if(sub.teachers.length === 0) { grid.innerHTML = '<p style="color:#777; width:100%; text-align:center;">قريباً...</p>'; return; }
             grid.innerHTML = sub.teachers.map((t, i) => `
                 <div class="card" onclick="showFolders(${i})">
                     <img src="${t.img}" class="card-img">
@@ -256,7 +311,7 @@
             if(!tech.folders || tech.folders.length === 0) { grid.innerHTML = '<p style="color:#777; width:100%; text-align:center;">لا يوجد كورسات</p>'; return; }
             grid.innerHTML = tech.folders.map((f, i) => `
                 <div class="card" onclick="showVideos(${i})">
-                    <img src="https://placehold.co/400x300/111/fff?text=Course" class="card-img" style="object-fit:contain; padding:20px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" class="card-img" style="object-fit:contain; padding:20px;">
                     <div class="card-title">${f.name}</div>
                 </div>
             `).join('');
@@ -267,75 +322,9 @@
             const folder = DATA[subIndex].teachers[techIndex].folders[idx];
             title.innerText = folder.name;
             grid.className = "";
-            grid.innerHTML = folder.videos.map(v => `
+            
+            grid.innerHTML = folder.videos.map((v, i) => `
                 <div class="video-wrapper">
-                    <div class="plyr__video-embed"><iframe src="https://www.youtube.com/embed/${v.link}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&rel=0" allowfullscreen allow="autoplay"></iframe></div>
-                    <div class="video-title">${v.title}</div>
-                </div>
-            `).join('');
-            Plyr.setup('.plyr__video-embed');
-        }
-
-        function goBack() {
-            if (currentView === 'videos') showFolders(techIndex);
-            else if (currentView === 'folders') showTeachers(subIndex);
-            else showSubjects();
-        }
-
-        // --- المودال ---
-        function openModal(id) { 
-            document.getElementById(id).style.display = 'flex'; 
-        }
-        function closeModal(id) { 
-            document.getElementById(id).style.display = 'none'; 
-        }
-
-        // --- البروفايل ---
-        function openProfile() {
-            openModal('profileModal');
-            db.collection('codes').where('code', '==', userCode).get().then(snap => {
-                if(!snap.empty) {
-                    const d = snap.docs[0].data();
-                    document.getElementById('pName').innerText = d.studentName;
-                    document.getElementById('pCode').innerText = d.code;
-                    document.getElementById('pExp').innerText = "ينتهي: " + d.expiresAt.toDate().toLocaleDateString('ar-EG');
-                }
-            }).catch(e => {
-                document.getElementById('pName').innerText = "خطأ في الاتصال";
-            });
-        }
-
-        // --- الدعم الفني ---
-        function openSupport() {
-            openModal('supportModal');
-            loadChat();
-        }
-        function sendMsg() {
-            const txt = document.getElementById('chatInput').value;
-            if(!txt) return;
-            db.collection('support').doc(userCode).collection('messages').add({
-                text: txt, sender: 'me', createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            document.getElementById('chatInput').value = '';
-        }
-        function loadChat() {
-            const box = document.getElementById('chatMsgs');
-            db.collection('support').doc(userCode).collection('messages').orderBy('createdAt').onSnapshot(snap => {
-                box.innerHTML = '';
-                if(snap.empty) box.innerHTML = '<div style="text-align:center; color:#555; margin-top:50px;">تواصل معنا</div>';
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    box.innerHTML += `<div style="overflow:hidden; width:100%;"><div class="msg ${m.sender}">${m.text}</div></div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
-        function logout() { localStorage.removeItem('fullmark_user'); window.location.href="login.html"; }
-
-        // تشغيل
-        showSubjects();
-    </script>
-</body>
-                    </html>
-    
+                    <div class="video-header">
+                        <span><i class="fas fa-play-circle"></i> ${v.title}</span>
+           
