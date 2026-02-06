@@ -2,40 +2,101 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الأكواد | Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | الأكواد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #050505; color: #fff; font-family: 'Cairo'; padding: 20px; }
-        .box { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; }
-        input, select, button { padding: 10px; border-radius: 5px; border: none; margin: 5px; }
-        button { background: #00e1ff; cursor: pointer; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
-        th { background: #222; color: #00e1ff; }
-        .active { color: #0f0; } .expired { color: #f00; }
+        :root { --main: #00e1ff; --bg: #02050a; --card: #0a0f18; --text: #fff; --success: #00ff88; --danger: #ff3333; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 15px; padding-bottom: 80px; }
+        
+        /* الهيدر */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(10, 15, 24, 0.95); padding: 15px; border-radius: 15px; border-bottom: 2px solid var(--main); }
+        .logo { font-size: 1.4rem; font-weight: 900; color: var(--main); }
+        .nav-btn { background: #111; color: #fff; border: 1px solid #333; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        .nav-btn.active { background: var(--main); color: #000; font-weight: bold; border-color: var(--main); }
+
+        /* الإحصائيات */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #1e293b; text-align: center; }
+        .stat-num { font-size: 1.8rem; font-weight: bold; color: var(--main); }
+        .stat-label { font-size: 0.8rem; color: #888; }
+
+        /* إنشاء كود */
+        .control-panel { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--main); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0, 225, 255, 0.1); }
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        input, select { padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; outline: none; font-size: 1rem; }
+        input:focus { border-color: var(--main); }
+        
+        .btn-gen { background: var(--main); color: #000; font-weight: bold; border: none; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 1.1rem; box-shadow: 0 0 15px rgba(0, 225, 255, 0.3); }
+        .btn-gen:active { transform: scale(0.98); }
+
+        .result-box { background: rgba(0, 225, 255, 0.1); border: 1px dashed var(--main); padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px; display: none; }
+        .code-display { font-size: 2rem; font-family: monospace; font-weight: bold; color: #fff; letter-spacing: 3px; margin: 10px 0; }
+
+        /* الجدول */
+        .search-box { width: 100%; margin-bottom: 10px; }
+        .student-list { display: flex; flex-direction: column; gap: 10px; }
+        .student-card { background: #111; padding: 15px; border-radius: 12px; border-left: 4px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .student-card.active { border-left-color: var(--success); }
+        .student-card.expired { border-left-color: var(--danger); }
+        
+        .s-info h4 { margin: 0 0 5px 0; font-size: 1.1rem; }
+        .s-info p { margin: 0; font-size: 0.85rem; color: #888; }
+        .s-code { font-family: monospace; color: var(--main); background: #000; padding: 2px 6px; border-radius: 4px; }
+
+        .actions { display: flex; gap: 8px; }
+        .act-btn { width: 35px; height: 35px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; }
+        .btn-renew { background: #1f2937; color: var(--success); border: 1px solid var(--success); }
+        .btn-del { background: #1f2937; color: var(--danger); border: 1px solid var(--danger); }
     </style>
 </head>
 <body>
-    <h1>🛠️ إدارة الأكواد</h1>
-    
-    <div class="box">
-        <h3>إنشاء كود جديد</h3>
-        <input type="text" id="sName" placeholder="اسم الطالب">
-        <select id="sDuration">
-            <option value="1">شهر</option>
-            <option value="3">3 شهور</option>
-            <option value="12">سنة</option>
-        </select>
-        <button onclick="genCode()">توليد وحفظ</button>
-        <div id="result" style="margin-top:10px; color:#00e1ff; font-size:1.2rem;"></div>
+
+    <div class="header">
+        <div class="logo">ADMIN</div>
+        <div style="display:flex; gap:10px;">
+            <a href="admin_support.html" class="nav-btn">الدعم</a>
+            <a href="#" class="nav-btn active">الأكواد</a>
+        </div>
     </div>
 
-    <div class="box">
-        <h3>الطلاب المسجلين</h3>
-        <table>
-            <thead><tr><th>الاسم</th><th>الكود</th><th>الانتهاء</th><th>الحالة</th><th>حذف</th></tr></thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-num" id="activeCount">0</div>
+            <div class="stat-label">نشط الآن</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="totalCount" style="color:#fff;">0</div>
+            <div class="stat-label">إجمالي الطلاب</div>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <h3 style="color:#fff; margin-bottom:15px;">👤 طالب جديد</h3>
+        <div class="input-group">
+            <input type="text" id="sName" placeholder="اسم الطالب الثلاثي">
+            <select id="sDuration">
+                <option value="1">شهر (30 يوم)</option>
+                <option value="3">3 شهور</option>
+                <option value="12">سنة</option>
+            </select>
+        </div>
+        <button class="btn-gen" onclick="genCode()">توليد كود التفعيل</button>
+        
+        <div id="resultArea" class="result-box">
+            <div style="font-size:0.9rem; color:#ccc;">تم الإنشاء بنجاح</div>
+            <div id="finalCode" class="code-display">------</div>
+            <button onclick="copyCode()" style="background:transparent; border:1px solid #fff; color:#fff; padding:5px 15px; border-radius:50px; cursor:pointer;">نسخ</button>
+        </div>
+    </div>
+
+    <h3 style="margin-bottom:10px; color:#fff;">📋 إدارة الطلاب</h3>
+    <input type="text" id="search" class="search-box" placeholder="بحث بالاسم أو الكود..." onkeyup="filterList()">
+    
+    <div id="studentsList" class="student-list">
+        <div style="text-align:center; color:#555; padding:20px;">جاري التحميل...</div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -44,42 +105,83 @@
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
+        // توليد
         function genCode() {
             const name = document.getElementById('sName').value;
             const months = parseInt(document.getElementById('sDuration').value);
-            if(!name) return;
+            if(!name) return alert("اكتب الاسم");
             
             const code = Math.floor(100000 + Math.random() * 900000).toString();
-            const exp = new Date();
-            exp.setMonth(exp.getMonth() + months);
+            const exp = new Date(); exp.setMonth(exp.getMonth() + months);
 
             db.collection('codes').add({
                 studentName: name, code: code, expiresAt: exp, createdAt: new Date()
             }).then(() => {
-                document.getElementById('result').innerText = `تم: ${code}`;
+                document.getElementById('resultArea').style.display = 'block';
+                document.getElementById('finalCode').innerText = code;
+                document.getElementById('sName').value = '';
                 loadData();
             });
         }
 
+        function copyCode() {
+            navigator.clipboard.writeText(document.getElementById('finalCode').innerText);
+            alert("تم النسخ");
+        }
+
+        // عرض وتجديد وحذف
         function loadData() {
             db.collection('codes').orderBy('createdAt', 'desc').get().then(snap => {
-                let html = '';
+                const list = document.getElementById('studentsList');
+                list.innerHTML = '';
+                let active = 0;
+                
                 snap.forEach(doc => {
                     const d = doc.data();
-                    const isActive = d.expiresAt.toDate() > new Date();
-                    html += `<tr>
-                        <td>${d.studentName}</td>
-                        <td style="font-family:monospace; font-size:1.1rem">${d.code}</td>
-                        <td>${d.expiresAt.toDate().toLocaleDateString('ar-EG')}</td>
-                        <td class="${isActive?'active':'expired'}">${isActive?'نشط':'منتهي'}</td>
-                        <td><button style="background:red; color:#fff" onclick="del('${doc.id}')">X</button></td>
-                    </tr>`;
+                    const isAct = d.expiresAt.toDate() > new Date();
+                    if(isAct) active++;
+                    
+                    list.innerHTML += `
+                    <div class="student-card ${isAct?'active':'expired'}">
+                        <div class="s-info">
+                            <h4>${d.studentName}</h4>
+                            <p>الكود: <span class="s-code">${d.code}</span></p>
+                            <p style="color:${isAct?'#00ff88':'#ff3333'}">${isAct ? 'ينتهي: ' + d.expiresAt.toDate().toLocaleDateString('ar-EG') : 'منتهي'}</p>
+                        </div>
+                        <div class="actions">
+                            <button class="act-btn btn-renew" onclick="renew('${doc.id}')"><i class="fas fa-sync"></i></button>
+                            <button class="act-btn btn-del" onclick="del('${doc.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
                 });
-                document.getElementById('tableBody').innerHTML = html;
+                
+                document.getElementById('totalCount').innerText = snap.size;
+                document.getElementById('activeCount').innerText = active;
             });
         }
-        
-        function del(id) { if(confirm('حذف؟')) db.collection('codes').doc(id).delete().then(loadData); }
+
+        function renew(id) {
+            const m = prompt("عدد شهور التجديد:", "1");
+            if(m) {
+                db.collection('codes').doc(id).get().then(d => {
+                    const current = d.data().expiresAt.toDate();
+                    const base = current > new Date() ? current : new Date();
+                    base.setMonth(base.getMonth() + parseInt(m));
+                    db.collection('codes').doc(id).update({ expiresAt: base }).then(loadData);
+                });
+            }
+        }
+
+        function del(id) { if(confirm("حذف نهائي؟")) db.collection('codes').doc(id).delete().then(loadData); }
+
+        function filterList() {
+            const val = document.getElementById('search').value.toLowerCase();
+            document.querySelectorAll('.student-card').forEach(card => {
+                const txt = card.innerText.toLowerCase();
+                card.style.display = txt.includes(val) ? 'flex' : 'none';
+            });
+        }
+
         loadData();
     </script>
 </body>
