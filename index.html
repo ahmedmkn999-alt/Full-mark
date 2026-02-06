@@ -15,10 +15,7 @@
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            background: linear-gradient(135deg, #02050a 0%, #050a14 100%);
-            color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; 
-        }
+        body { background: linear-gradient(135deg, #02050a 0%, #050a14 100%); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 15px; }
         
@@ -29,15 +26,10 @@
             padding: 10px 20px; border-radius: 20px; margin-bottom: 25px; 
             box-shadow: 0 0 25px rgba(0, 225, 255, 0.15); backdrop-filter: blur(10px);
         }
-        .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
-        
-        .header-icons { display: flex; gap: 10px; align-items: center; }
-        .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 225, 255, 0.3);
-            background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
-        }
-        .logout-btn { color: #ff4444; border-color: #ff4444; }
+        .logo { font-size: 1.6rem; font-weight: 900; color: var(--main); text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
+        .header-icons { display: flex; gap: 10px; }
+        .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .logout-btn { color: #ff4444; border: 1px solid #ff4444; }
 
         /* التنقل */
         .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -55,16 +47,14 @@
         }
         .card:active { transform: scale(0.97); border-color: var(--main); }
         
-        /* صورة المنصة الموحدة */
+        /* الصور (تعديل: عرض كامل بدون قص) */
         .card-img-container { 
-            width: 100%; height: 160px; 
+            width: 100%; height: 180px; 
             background: #000; display: flex; align-items: center; justify-content: center;
-            padding: 20px;
         }
         .card-img { 
             max-width: 100%; max-height: 100%; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 5px rgba(0, 225, 255, 0.5));
+            object-fit: contain; /* عشان الصورة تظهر كاملة */
         }
         .card-title { padding: 12px; text-align: center; font-weight: bold; font-size: 1rem; color: #fff; background: #0f121a; border-top: 1px solid rgba(255,255,255,0.1); }
 
@@ -72,12 +62,8 @@
         .video-list { display: flex; flex-direction: column; gap: 20px; }
         .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; }
         .video-header { padding: 15px; background: #111; color: var(--main); font-weight: bold; font-size: 1rem; border-bottom: 1px solid #333; }
-        .empty-msg { text-align: center; color: #777; margin-top: 50px; padding: 20px; border: 1px dashed #333; border-radius: 10px; grid-column: 1/-1; }
-
-        /* المودال */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #0f121a; border: 1px solid var(--main); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; position: relative; }
-        .close { position: absolute; top: 15px; left: 15px; color: #fff; font-size: 22px; cursor: pointer; }
+        
+        .empty-msg { text-align: center; color: #777; margin-top: 50px; grid-column: 1/-1; padding: 20px; border: 1px dashed #333; }
     </style>
 </head>
 <body>
@@ -86,7 +72,6 @@
         <header>
             <div class="logo">FULL MARK</div>
             <div class="header-icons">
-                <div class="icon-btn" onclick="openProfile()"><i class="fas fa-user"></i></div>
                 <div class="icon-btn logout-btn" onclick="logout()"><i class="fas fa-power-off"></i></div>
             </div>
         </header>
@@ -100,175 +85,138 @@
         <div style="height: 50px;"></div>
     </div>
 
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('profileModal')">&times;</span>
-            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" style="width:80px; border-radius:50%; border:3px solid var(--main); margin-bottom:15px;">
-            <div style="margin-bottom:10px;">الاسم: <span id="pName" style="color:#fff; font-weight:bold;">...</span></div>
-            <div>الكود: <span id="pCode" style="color:var(--main); font-family:monospace;">...</span></div>
-        </div>
-    </div>
-
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
-        firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-
-        // صورة المنصة الموحدة (أيقونة Full Mark زرقاء)
-        const MAIN_IMG = "https://cdn-icons-png.flaticon.com/512/2997/2997380.png"; 
-
-        // دمج بيانات الملف + المواد الأساسية
+        // الداتا الكاملة من الملف الأصلي (بالصور الأصلية والفيديوهات كلها)
         const ALL_DATA = [
-            // --- بيانات من الملف (كيمياء، أحياء، إنجليزي، تاريخ) ---
-            {
-                name: "الكيمياء", img: MAIN_IMG,
-                teachers: [
-                    { name: "أ. محمد عبدالجواد", img: MAIN_IMG, chapters: [{chapter_name: "الأساسيات", lectures: [{lecture_name: "التأسيس", videos: [{video_name: "التوزيع الإلكترونى", link: "https://river-5-533.rtbcdn.ru/hls-vod/iSmUdDzLxKk8Ln_4GDlIpQ/1770394615/3402/0x5000c500fa6e9016/dda8cd611e33417f84af22dfc71c0a91.mp4.m3u8"}]}]}] },
-                    { name: "خالد صقر", img: MAIN_IMG, chapters: [] }
+  {
+    "name": "كيمياء",
+    "img": "https://static.vecteezy.com/system/resources/previews/014/472/954/original/chemistry-logo-template-illustration-free-vector.jpg",
+    "teachers": [
+      {
+        "name": "أ. محمد عبدالجواد",
+        "img": "https://files.coursatk.online/images/questions/23b4ebea27532d1d05b2f7de5f26e63add3e4ca8ffcd.jpg",
+        "chapters": [
+          {
+            "chapter_name": "الأساسيات",
+            "lectures": [
+              {
+                "lecture_name": "التأسيس",
+                "videos": [
+                  { "video_name": "التوزيع الإلكترونى و خواص الجدول الدورى 📅", "link": "https://river-5-533.rtbcdn.ru/hls-vod/iSmUdDzLxKk8Ln_4GDlIpQ/1770394615/3402/0x5000c500fa6e9016/dda8cd611e33417f84af22dfc71c0a91.mp4.m3u8" },
+                  { "video_name": "الأكسده و الإختزال 🧪", "link": "https://river-4-434.rtbcdn.ru/hls-vod/G0D2NUeC7GmF_yDCkI2Kig/1770420276/3340/0x5000c500e986ecb4/ccfd99e4962748e7869221cadb2f3281.mp4.m3u8" },
+                  { "video_name": "المعادلة الكيميائية 🤯", "link": "https://river-5-513.rtbcdn.ru/hls-vod/NQIiWL7ni_Niw1sytu-p3Q/1770460195/2686/0x5000039ce8396d71/347878c1695647fa97859d6caaf76375.mp4.m3u8" },
+                  { "video_name": "المول و الحساب الكيميائى 🧮", "link": "https://river-3-3102.rtbcdn.ru/hls-vod/Lw1_dYy2nFRF320gg6y8gQ/1770463305/3374/0x5000c500fa77a6a8/c48dd91ff408466b8a2947c802659b7f.mp4.m3u8" }
                 ]
-            },
-            {
-                name: "الأحياء", img: MAIN_IMG,
-                teachers: [
-                    { name: "د.احمد الجوهري", img: MAIN_IMG, chapters: [{chapter_name: "المناعة", lectures: [{lecture_name: "المناعة في النبات", videos: [{video_name: "شرح المناعة", link: "https://river-5-558.rtbcdn.ru/hls-vod/bF_chMQsNTvg_V7-VbQCjg/1770501574/2646/0x5000039ce83a1935/810eac247fde4049b986dcc6a930358d.mp4.m3u8"}]}]}] },
-                    { name: "محمد أيمن", img: MAIN_IMG, chapters: [] }
+              }
+            ]
+          },
+          {
+            "chapter_name": "الباب الأول",
+            "lectures": [
+              {
+                "lecture_name": "المحاضرة الأولى",
+                "videos": [
+                  { "video_name": "المحاضره #1 | الجزء الأول 🧪", "link": "https://river-3-301.rtbcdn.ru/hls-vod/bbMBvuDTTcLPLma86u5TfA/1770408256/2636/0x5000039ce868ef9d/a267d076ca524d73a4c80f7f69eb6689.mp4.m3u8" },
+                  { "video_name": "المحاضره #1 | الجزء الثانـى 🧪", "link": "https://river-3-353.rtbcdn.ru/hls-vod/tiFkEQV6uhrWYug1gIG02A/1770474372/2704/0x5000039ce86021b1/a366c84f0101474ca8b2303f452d506f.mp4.m3u8" },
+                  { "video_name": "المحاضره #1 | مفاتيح الحل 🗝️", "link": "https://river-5-535.rtbcdn.ru/hls-vod/d7SU1uVmn5cClNXoxsCOdA/1770407063/3306/0x5000c5007447600d/27b6c8ef25f24816b9e9a707cec7c47e.mp4.m3u8" },
+                  { "video_name": "المحاضره #1 | عشره من الأخر ( كتاب الشرح ) 🧾", "link": "https://river-4-436.rtbcdn.ru/hls-vod/ZCQosnTtDuBKL5oeOR3o_w/1770556929/3310/0x5000c500e9311d0c/1cd76f30d98049a997e5f0447c999936.mp4.m3u8" },
+                  { "video_name": "المحاضره #1 | أسئلة مستر عبدالجواد 😎", "link": "https://river-3-357.rtbcdn.ru/hls-vod/gGkxjkPoPPXH3px4z0iUew/1770558302/3330/0x5000c500e9cfc577/a92aa399ac864b50a75ce9facfacb596.mp4.m3u8" },
+                  { "video_name": "المحاضره #1 | حل الواجـب ❤️", "link": "https://river-4-429.rtbcdn.ru/hls-vod/0HTKra58MkcE6TZ4zj0IYA/1770542952/3256/0x5000c500e9cfb868/e57c8e5ad93f402fb0fdae2c71620c8b.mp4.m3u8" }
                 ]
-            },
-            {
-                name: "اللغة الإنجليزية", img: MAIN_IMG,
-                teachers: [
-                    { name: "عبقري لغة", img: MAIN_IMG, chapters: [{chapter_name: "Unit 7", lectures: [{lecture_name: "Unit 7", videos: [{video_name: "لعبة كلمات", link: "https://river-3-345.rtbcdn.ru/hls-vod/oYl6bYGCWxjkkzOTjczQeQ/1770554251/1879/0x5000c500e53a27da/9d1a971b866f4bd081ea784b13680871.mp4.m3u8"}]}]}] }
+              },
+              {
+                "lecture_name": "المحاضرة الثانية",
+                "videos": [
+                  { "video_name": "المحاضره #2 | فى العضل يا دكتـور ( الملخص ) 💉", "link": "https://river-4-432.rtbcdn.ru/hls-vod/_ni9PAiJGjNQKHrLxwlAxg/1770499052/3330/0x5000c500db0e64f5/32b9cde0ff2a4668b12a66df02dc5660.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | أعداد التاكسـد - الجزء الأول 🍉", "link": "https://river-3-301.rtbcdn.ru/hls-vod/ARMAx2hJnYo1Q3Ip0oEv7A/1770372143/3388/0x5000c500e874e90a/2b2bb62a867b49c1ba9318ca7ebe69d3.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | أعداد التاكسـد - الجزء الثانى 🍉", "link": "https://river-3-347.rtbcdn.ru/hls-vod/whZ_7j9_PFyX6IhmnFku4A/1770549919/3314/0x5000c50074476023/b74a704dd504496f973d4d1458a49e11.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | مفاتيح الحل 🗝️", "link": "https://river-5-512.rtbcdn.ru/hls-vod/Pr-0vnzeS7-2nihTnzgobg/1770547973/3330/0x5000c500e9cf561d/3d9bbcc586ac4f82a6585e43bdfd66e3.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | عشره من الأخـر ⛺", "link": "https://river-5-549.rtbcdn.ru/hls-vod/qLbvD01IJcZhi5moXnGglg/1770513551/3306/0x5000c50074476216/5500d4569e5a456a9493f1ab3fee0f6b.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | أسئلة مستر عبدالجواد 🍿", "link": "https://river-3-368.rtbcdn.ru/hls-vod/hfnQIS4sA2B5lodJ5DxoQg/1770519539/3290/0x5000c500fa6e75b3/f63cf5b96cfc46d891b1ed1073a0311d.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | أسئلة الثانوية العامة 🌶️", "link": "https://river-3-347.rtbcdn.ru/hls-vod/oa2tXx4JLvfjcopliUS8UA/1770520769/2726/0x5000039ce8382e35/b678b4bd63084a2e9038b500142b665c.mp4.m3u8" },
+                  { "video_name": "المحاضره #2 | حل الواجـب ❤️", "link": "https://river-5-554.rtbcdn.ru/hls-vod/oBza62_lrV9ZZuhVyP4biw/1770372934/3338/0x5000c500e9ebef9c/2beae9a31e334411a0ac99f398a987e7.mp4.m3u8" }
                 ]
-            },
-            // --- مواد أساسية (بدون محتوى حالياً) ---
-            { name: "اللغة العربية", img: MAIN_IMG, teachers: [{name: "أ. محمد صلاح", img: MAIN_IMG, chapters: []}] },
-            { name: "الرياضيات", img: MAIN_IMG, teachers: [{name: "أ. أحمد عصام", img: MAIN_IMG, chapters: []}] },
-            { name: "الفيزياء", img: MAIN_IMG, teachers: [{name: "أ. محمود مجدي", img: MAIN_IMG, chapters: []}] },
-            // --- اللغات الثانية ---
-            {
-                name: "اللغات الثانية", img: MAIN_IMG,
-                teachers: [
-                    { name: "فرنساوي (مسيو انس)", img: MAIN_IMG, videos: [{title:"الجزء 1", link:"3PC1fxpp-Xk"}] },
-                    { name: "ألماني (هير ياسين)", img: MAIN_IMG, videos: [{title:"التأسيس", link:"JOLc4Jc9yFU"}] },
-                    { name: "إيطالي (سنيور مدحت)", img: MAIN_IMG, videos: [{title:"المنهج كامل", link:"T6hpZH5AMnk"}] },
-                    { name: "إسباني (سنيور ماجد)", img: MAIN_IMG, videos: [{title:"شرح كامل", link:"K9ZOydc1cqs"}] }
+              },
+              {
+                "lecture_name": "المحاضرة الثالثة",
+                "videos": [
+                  { "video_name": "المحاضره #3 | فى العضل يا دكتور 💉", "link": "https://river-3-301.rtbcdn.ru/hls-vod/7xltTB7QPM_Uup0DbeV27A/1770607864/3394/0x5000c500fa6e74d6/b5bc416b7f6444468cb15cffcdb345c0.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | الخواص العامة للعناصر الإنتقالية | الجزء الأول 🧊", "link": "https://river-5-517.rtbcdn.ru/hls-vod/1bA7awXyKkkujtjrlaAehA/1770473180/3264/0x5000c500e9ebfc23/ac503b71ac5648d088fbe21f7d8f75bb.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | الخواص العامة للعناصر الإنتقالية | الجزء الثانى 🧊", "link": "https://river-3-3106.rtbcdn.ru/hls-vod/93_mCU45OrgWslzHbx1ACg/1770473317/3408/0x5000c500dbb7a277/d1ae18b8c3764be18affb7dc0167e213.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | مفاتيح الحل 🗝️", "link": "https://river-5-532.rtbcdn.ru/hls-vod/dkyxTIPEGkHIn_vvfgKncQ/1770574452/3298/0x5000c500e9cf37fe/54a324d3ed4f454e814ab71a20bb7746.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | عشره من الأخـر 🎯", "link": "https://river-5-536.rtbcdn.ru/hls-vod/fRmwPQBn3YhMDhLVNGP2zA/1770455812/3348/0x5000c500fa8046c3/e1d6b526354242649f183c7df62832c9.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | أسئلة مستر عبدالجواد 🔥", "link": "https://river-5-557.rtbcdn.ru/hls-vod/C-ed-9A3avWpjldaBkgC6A/1770545115/3356/0x5000c500fa774e94/21d16e9762f34a3fa517b81cdbd355d8.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | أسئلة الثانوية العامة 😮", "link": "https://river-4-438.rtbcdn.ru/hls-vod/RinIdRcErkIOjoMhHHGtYg/1770608159/3332/0x5000c500e9daa458/9a4560e012464a88a6e1fdc8f252d2eb.mp4.m3u8" },
+                  { "video_name": "المحاضره #3 | حل الواجـب ❤️", "link": "https://river-5-537.rtbcdn.ru/hls-vod/V5ZYmY3JqcZBvRwcCzgiDA/1770608193/3330/0x5000c500e90f7ff4/3cfa3c76a3b14fe9afb5124f36423406.mp4.m3u8" },
+                  { "video_name": "حل الإمتحان", "link": "https://river-4-441.rtbcdn.ru/hls-vod/BOBnf8mSPnJi7fHXLcQqHA/1770608233/3308/0x5000c500e9cef3c5/691b8aaca916456e9f12277304ceed64.mp4.m3u8" }
                 ]
-            }
-        ];
-
-        // منطق التطبيق
-        const grid = document.getElementById('gridArea');
-        const title = document.getElementById('pageTitle');
-        const back = document.getElementById('backBtn');
-        let viewStack = [];
-
-        function createCard(title, img, onclick) {
-            return `
-            <div class="card" onclick="${onclick}">
-                <div class="card-img-container"><img src="${img}" class="card-img"></div>
-                <div class="card-title">${title}</div>
-            </div>`;
-        }
-
-        // عرض المواد
-        function renderSubjects() {
-            title.innerText = "المواد الدراسية"; back.style.display = 'none'; grid.className = 'grid'; viewStack = [{type: 'subjects'}];
-            grid.innerHTML = ALL_DATA.map((sub, i) => createCard(sub.name, sub.img, `renderTeachers(${i})`)).join('');
-        }
-
-        // عرض المدرسين
-        function renderTeachers(subIdx) {
-            const sub = ALL_DATA[subIdx]; title.innerText = sub.name; back.style.display = 'inline-block'; viewStack.push({type: 'teachers', subIdx});
-            if(!sub.teachers || sub.teachers.length===0) { grid.innerHTML='<div class="empty-msg">قريباً</div>'; return; }
-            
-            // لو المادة لغات ثانية (فيديوهات مباشرة)
-            if(sub.name === "اللغات الثانية") {
-                grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.img, `renderDirectVideos(${subIdx}, ${i})`)).join('');
-            } else {
-                grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.img, `renderChapters(${subIdx}, ${i})`)).join('');
-            }
-        }
-
-        // عرض الفصول (للمواد الأساسية)
-        function renderChapters(subIdx, techIdx) {
-            const teacher = ALL_DATA[subIdx].teachers[techIdx]; title.innerText = teacher.name; viewStack.push({type: 'chapters', subIdx, techIdx});
-            if(!teacher.chapters || teacher.chapters.length===0) { grid.innerHTML='<div class="empty-msg">لا يوجد محتوى حالياً</div>'; return; }
-            grid.innerHTML = teacher.chapters.map((c, i) => createCard(c.chapter_name, MAIN_IMG, `renderLectures(${subIdx}, ${techIdx}, ${i})`)).join('');
-        }
-
-        // عرض المحاضرات
-        function renderLectures(subIdx, techIdx, chapIdx) {
-            const chapter = ALL_DATA[subIdx].teachers[techIdx].chapters[chapIdx]; title.innerText = chapter.chapter_name; viewStack.push({type: 'lectures', subIdx, techIdx, chapIdx});
-            if(!chapter.lectures || chapter.lectures.length===0) { grid.innerHTML='<div class="empty-msg">فارغ</div>'; return; }
-            grid.innerHTML = chapter.lectures.map((l, i) => createCard(l.lecture_name, MAIN_IMG, `renderVideos(${subIdx}, ${techIdx}, ${chapIdx}, ${i})`)).join('');
-        }
-
-        // عرض الفيديوهات (من الملف - m3u8)
-        function renderVideos(subIdx, techIdx, chapIdx, lecIdx) {
-            const lecture = ALL_DATA[subIdx].teachers[techIdx].chapters[chapIdx].lectures[lecIdx];
-            title.innerText = lecture.lecture_name; grid.className = 'video-list'; viewStack.push({type: 'videos'});
-            
-            if(!lecture.videos || lecture.videos.length === 0) { grid.innerHTML='<div class="empty-msg">لا يوجد فيديوهات</div>'; return; }
-
-            grid.innerHTML = lecture.videos.map((v, i) => `
-                <div class="video-wrapper">
-                    <div class="video-header">${v.video_name}</div>
-                    <div class="plyr__video-embed"><video id="player-${i}" controls crossorigin playsinline style="width:100%"></video></div>
-                </div>`).join('');
-
-            // تشغيل HLS
-            setTimeout(() => {
-                lecture.videos.forEach((v, i) => {
-                    const video = document.getElementById(`player-${i}`);
-                    if(Hls.isSupported()) {
-                        const hls = new Hls(); hls.loadSource(v.link); hls.attachMedia(video);
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = v.link;
-                    }
-                    new Plyr(video);
-                });
-            }, 500);
-        }
-
-        // عرض فيديوهات اللغات الثانية (يوتيوب)
-        function renderDirectVideos(subIdx, techIdx) {
-            const teacher = ALL_DATA[subIdx].teachers[techIdx]; title.innerText = teacher.name; grid.className = 'video-list'; viewStack.push({type: 'videos'});
-            
-            grid.innerHTML = teacher.videos.map((v, i) => `
-                <div class="video-wrapper">
-                    <div class="video-header">${v.title}</div>
-                    <div class="plyr__video-embed"><iframe src="https://www.youtube.com/embed/${v.link}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe></div>
-                </div>`).join('');
-            setTimeout(() => { Array.from(document.querySelectorAll('.plyr__video-embed')).map(p => new Plyr(p)); }, 500);
-        }
-
-        function goBack() {
-            if(viewStack.length > 1) {
-                viewStack.pop(); const prev = viewStack[viewStack.length-1];
-                if(prev.type === 'subjects') renderSubjects();
-                else if(prev.type === 'teachers') renderTeachers(prev.subIdx);
-                else if(prev.type === 'chapters') renderChapters(prev.subIdx, prev.techIdx);
-                else if(prev.type === 'lectures') renderLectures(prev.subIdx, prev.techIdx, prev.chapIdx);
-            }
-        }
-
-        function openModal(id){ document.getElementById(id).style.display='flex'; }
-        function closeModal(id){ document.getElementById(id).style.display='none'; }
-        function openProfile(){ 
-            openModal('profileModal'); 
-            const u = localStorage.getItem('fullmark_user');
-            if(u) db.collection('codes').where('code','==',u).get().then(s=>{
-                if(!s.empty) { const d=s.docs[0].data(); document.getElementById('pName').innerText=d.studentName; document.getElementById('pCode').innerText=d.code; }
-            });
-        }
-        function logout(){ localStorage.removeItem('fullmark_user'); window.location.href="login.html"; }
-
-        if(!localStorage.getItem('fullmark_user')) window.location.href="login.html";
-        renderSubjects();
-    </script>
-</body>
-</html>
+              },
+              {
+                "lecture_name": "المحاضرة الرابعة",
+                "videos": [
+                  { "video_name": "المحاضره #4 | فى العضل ي دكتـور 💉", "link": "https://river-5-558.rtbcdn.ru/hls-vod/ZZKJwmLGhQhAfzNYdhjq6g/1770578044/3388/0x5000c500e8759388/baae3fc99f1d4b36949d22aefd3be32f.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | الحديد ⛓️‍💥 - الجزء الأول", "link": "https://river-3-352.rtbcdn.ru/hls-vod/lGwZcvnEWk6vokYTjj2XZw/1770384208/1865/0x5000c500e539544a/879aacdf3b9f448fb037b4e1837bcee9.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | الحديد ⛓️‍💥 - الجزء الثانـى", "link": "https://river-5-513.rtbcdn.ru/hls-vod/XtrJGKN_Vf2kRjKhXtpkug/1770488678/2694/0x5000039ce87074ad/cbf4e861d9e24671ba9dfc9ae4982053.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | مفاتيح الحل 🗝️", "link": "https://river-3-388.rtbcdn.ru/hls-vod/bsrQY0fVKU95FqP5VqwmWw/1770440550/3306/0x5000c500e9774f2a/497c6b521032494fb03fdd73dec14027.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | عشره من الأخـر ⏰", "link": "https://river-4-424.rtbcdn.ru/hls-vod/2kKZcBQpzzHT6eTO5pYIXg/1770570081/3262/0x5000c500e9daa6fd/a60046587a414b86ab1b79b82a11ec90.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | أسئلة مستر عبدالجواد 🥭", "link": "https://river-4-428.rtbcdn.ru/hls-vod/jMrtgxleS64g_Z1I2CI01Q/1770490620/3288/0x5000c500fa7837e1/f2d4849f440e456fabaa1f6517a6324e.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | أسئلة الثانوية العامة 😱", "link": "https://river-5-512.rtbcdn.ru/hls-vod/zM7bR40r8RItxTqrK8vmVg/1770490623/1897/0x5000c500e4a02f9a/169b6d52f22842f79a4b983c88ffb011.mp4.m3u8" },
+                  { "video_name": "المحاضره #4 | حـل الواجب 🎯", "link": "https://river-5-550.rtbcdn.ru/hls-vod/8BslWuNjDoJHwehGpPtE2A/1770386125/3346/0x5000c500e9cc0c29/384fc707cc9a4508a7925c2211ab9a74.mp4.m3u8" },
+                  { "video_name": "حل الواجب 2", "link": "https://river-4-421.rtbcdn.ru/hls-vod/NQ5vO-jiasoitUlbL__VIA/1770578184/3336/0x5000c500e9ebfeb6/add882e71a934ba292cd278a8e1c49dd.mp4.m3u8" },
+                  { "video_name": "حل الإمتحان", "link": "https://river-4-403.rtbcdn.ru/hls-vod/15veZFDd781KwEykT-RRWQ/1770572225/3268/0x5000c500e34bcd98/114e1b2d4b8c4dcdb701da4653de6021.mp4.m3u8" }
+                ]
+              },
+              {
+                "lecture_name": "المحاضرة الخامسة",
+                "videos": [
+                  { "video_name": "المحاضره #5 | فى العضـل 💉", "link": "https://river-4-425.rtbcdn.ru/hls-vod/FAgTEGDl1FMAiUavSx9ZTg/1770579610/3264/0x5000c500e9cf1ec0/41aa2e387e614ea59165ae60341d8d39.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | أكاسيد الحديد - الجزء الأول ⛓️", "link": "https://river-5-546.rtbcdn.ru/hls-vod/YtOAEcSfK_v4wbFlqA1sfQ/1770555961/3404/0x5000c500e882bf1e/ed6e468431954cd8a6919a82d149f485.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | أكاسيد الحديد - الجزء الثانـى ⛓️", "link": "https://river-4-431.rtbcdn.ru/hls-vod/Q8qfBBQuK3v79moFIw80fw/1770371969/3264/0x5000c500e9ebff9d/970c150873ed41c195987521d9634e0c.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | مفاتيح الحل 🗝️", "link": "https://river-4-409.rtbcdn.ru/hls-vod/QyLmGiBmMcsDz1SMRkpfWw/1770525258/3258/0x5000c500dcf4f764/b9ff76664631460eb95d0c891053ee83.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | عشره من الأخـر ⏰", "link": "https://river-3-354.rtbcdn.ru/hls-vod/56une0HEjJbOj-Ztx9fjqg/1770608808/1881/0x5000c500e5391f43/67bf87b5af2849aebce7ae6fd998dbc4.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | أسئلة مستر عبدالجـواد 🔥", "link": "https://river-4-432.rtbcdn.ru/hls-vod/PeIeOg7hw-2Am0k7d5609w/1770608833/3344/0x5000c500e9cf3e73/20481d1b0146417ab4a28cd90c2263cc.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | أسئلة الثانوية العامة 🤯", "link": "https://river-3-353.rtbcdn.ru/hls-vod/louiPF61OvzR7GW4aNJlfw/1770559643/2622/0x5000039ce833db79/0cdf44ad7c174157a5752d6db48923d9.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | حـل الواجـب 🔔", "link": "https://river-4-428.rtbcdn.ru/hls-vod/kY07a0w7fGdu0j8KFqZX1A/1770477400/3338/0x5000c500e9ebf7d0/707efa39b9414399a5d59bbb8b091285.mp4.m3u8" },
+                  { "video_name": "المحاضره #5 | حل إمتحان المحاضره ✅", "link": "https://river-5-556.rtbcdn.ru/hls-vod/Ma7JXQ8iKnr5F3eify7hZQ/1770608973/3366/0x5000c500fa7805de/f1309d89859a4a079b7b4971b7ee4da1.mp4.m3u8" },
+                  { "video_name": "في العضل", "link": "https://river-5-554.rtbcdn.ru/hls-vod/KwWm0fiTQPKyTJ1cc07kqg/1770579660/3386/0x5000c500e874e117/56e532fdb53e474c935d84d077bc893b.mp4.m3u8" }
+                ]
+              },
+              {
+                "lecture_name": "المعسكر",
+                "videos": [
+                  { "video_name": "معسكر الإنقاذ | الباب الأول - الجزء الأول", "link": "https://river-4-410.rtbcdn.ru/hls-vod/FJsdOGHECnNT5M6M6F1oZw/1770394465/2161/0x5000c500e74e9f6b/43e9f1767a8e462796fb05b82f1eff53.mp4.m3u8" },
+                  { "video_name": "معسكر إنقاذ الباب الأول الجزء الثانـى", "link": "https://river-3-344.rtbcdn.ru/hls-vod/rA1FeOghhJLELhqQJuE3cg/1770565221/3350/0x5000c500e9ebd8ca/f86f29e6f9de4818b808039a4dab9a29.mp4.m3u8" },
+                  { "video_name": "حل الإمتحان الشامل على الباب الأول", "link": "https://river-3-387.rtbcdn.ru/hls-vod/uFdK-a8m8b-y9r3U_O_0_A/1770474630/3276/0x5000c500fa700863/a382fae9e54a4216bea2763158b989da.mp4.m3u8" }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "الباب الثاني",
+            "lectures": [
+              {
+                "lecture_name": "مقدمة",
+                "videos": [
+                  { "video_name": "تأسيس التحليل الكيميائي", "link": "https://river-4-408.rtbcdn.ru/hls-vod/hmMZOO0T8hYvjwecEQOz8w/1770480703/2682/0x5000039ce83a2471/7f7dc2ae45cf42f198f61aa6d89cf915.mp4.m3u8" }
+                ]
+              },
+              {
+                "lecture_name": "المحاضرة الأولى",
+                "videos": [
+                  { "video_name": "لمحاضره #6 - التحليل الكيميائى | الجزء الأول 🧪", "link": "https://river-3-341.rtbcdn.ru/hls-vod/GvySmNqyFGacg6w-exMyiQ/1770455652/1859/0x5000c500e53c6c51/d8890afb21f64dbaae580fb14ec1ca24.mp4.m3u8" },
+                  { "video_name": "المحاضره #6 - التحليل الكيميائى | الجزء الثانـى 🧪", "link": "https://river-3-383.rtbcdn.ru/hls-vod/v6sBmwIiaQUQia-S5Mdn-A/1770556160/3398/0x5000c500fa6e9148/574a5a4a5eb14b4ca0cf0097b3e3dc09.mp4.m3u8" },
+                  { "video_name": "المحاضره #6 - مفاتيح الحل 🗝️", "link": "https://river-3-383.rtbcdn.ru/hls-vod/v6sBmwIiaQUQia-S5Mdn-A/1770556160/3398/0x5000c500fa6e9148/574a5a4a5eb14b4ca0cf0097b3e3dc09.mp4.m3u8" },
+                  { "video_name": "المحاضره #6 | عشره من الأخر 🎯", "link": "https://river-3-358.rtbcdn.ru/hls-vod/GIqCk4OjheC14FJsPBhtFw/1770576047/3278/0x5000c500fa6ffef4/7cead77fe7024b19a988040a76c6560c.mp4.m3u8" },
+                  { "video_name": "المحاضره #6 | أسئلة الثانوية العامة 🌶", "link": "https://river-3-352.rtbcdn.ru/hls-vod/y5MPa66wji_n66W-35UQ_w/1770576660/2620/0x5000039ce868e485/acb80fc336e04b4b81a5d199f0a1221f.mp4.m3u8" },
+                  { "video_name": "المحاضره #6 | أسئلة مستر عبدالجواد 🍿", "link": "https://river-3-348.rtbcdn.ru/hls-vod/Ifsj3giBLBF3d0HhKb5llA/1770595157/3346/0x5000c500e9ce2594/97d98e74144747ef96c5e9097b03b347.mp4.m3u8" },
+                  { "video_name": "المحاضره #6 | حل الواجـب 🍿", "link": "https://river-4-421.rtbcdn.ru/hls-vod/Gn3XIYs1UbrFj4kDFQZl2w/1770559781/3322/0x5000c500e9cfbe15/e12b9014bc404e208e14c05188480b24.mp4.m3u8" }
+                ]
+              },
+              {
+                "lecture_name": "المحاضرة الثانية",
+                "videos": [
+                  { "video_name": "المحاضره #7 | فى العضل 💉", "link": "https://river-4-404.rtbcdn.ru/hls-vod/FzG3snjNNmckPjUx7HKOOQ/1770469287/2690/0x5000039ce8406175/3e4075e5fa12411eabb4282e109ec8ed.mp4.m3u8" },
+                  { "video_name": "المحاضره #7 | مجموعه حمض الكبريتيك - الجزء الأول 💣", "link": "https://river-3-341.rtbcdn.ru/hls-vod/8hGYfkF9npxUcuFQ8PHS3g/1770549498/3336/0x5000c500e9ebf51b/d3b9a037eda3413e818c7addc9817be6.mp4.m3u8" }
