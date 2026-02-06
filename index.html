@@ -3,86 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>المنصة | Full Mark</title>
+    <title>Full Mark | المنصة</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --main: #00e1ff; --bg: #000; --card: #111; --text: #fff; }
+        :root { --main: #00e1ff; --bg: #020617; --card: #0f172a; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #001a1f 0%, #000 90%); }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
+        /* الخلفية المتحركة */
+        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; pointer-events: none; }
+        
+        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 20px; }
         
         /* الهيدر */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(20,20,20,0.95); border-bottom: 2px solid var(--main);
+            background: rgba(15, 23, 42, 0.9); border: 1px solid #1e293b; border-bottom: 2px solid var(--main);
             padding: 15px 20px; border-radius: 20px; margin-bottom: 30px; 
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0, 225, 255, 0.1);
         }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 20px rgba(0, 225, 255, 0.6); }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.6); }
         
-        .header-icons { display: flex; gap: 12px; }
+        .header-icons { display: flex; gap: 10px; }
         .icon-btn {
-            width: 45px; height: 45px; border-radius: 50%; border: 1px solid #444; 
+            width: 45px; height: 45px; border-radius: 50%; border: 1px solid #333; 
             background: #000; color: #fff; display: flex; align-items: center; justify-content: center; 
             font-size: 1.2rem; cursor: pointer; transition: 0.3s;
         }
         .icon-btn:hover { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); transform: scale(1.1); }
-        .icon-btn.logout { color: #ff4444; border-color: #ff4444; }
+        .icon-btn.logout { border-color: #ef4444; color: #ef4444; }
+        .icon-btn.logout:hover { background: #ef4444; color: #fff; box-shadow: 0 0 20px #ef4444; }
 
         /* الشبكة */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; } }
+        @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; } }
 
         .card { 
-            background: #0a0a0a; border: 1px solid #222; border-radius: 25px; overflow: hidden; 
-            position: relative; transition: 0.4s; cursor: pointer;
+            background: var(--card); border: 1px solid #1e293b; border-radius: 20px; overflow: hidden; 
+            position: relative; transition: 0.4s; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .card:active { transform: scale(0.95); }
-        .card:hover { transform: translateY(-5px); border-color: var(--main); box-shadow: 0 0 20px rgba(0, 225, 255, 0.2); }
+        .card:hover { transform: translateY(-7px); border-color: var(--main); box-shadow: 0 0 25px rgba(0, 225, 255, 0.2); }
         
-        .card-img { width: 100%; height: 200px; object-fit: cover; }
+        /* التعامل الذكي مع الصور */
+        .card-img-container { width: 100%; height: 180px; position: relative; background: #000; overflow: hidden; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0; } 
+        .card-img.loaded { opacity: 1; }
+        
+        /* بديل الصورة لو باظت */
+        .img-fallback {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(45deg, #0f172a, #1e293b);
+            color: var(--main); font-size: 3rem; font-weight: bold;
+            text-align: center; padding: 10px;
+        }
+        .img-fallback span { font-size: 1.2rem; color: #fff; position: absolute; bottom: 10px; left: 0; width: 100%; }
+
         .card-title { 
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; 
-            background: rgba(0,0,0,0.8); text-align: center; font-weight: 800; font-size: 1.1rem;
+            padding: 15px; text-align: center; font-weight: 800; font-size: 1.1rem; 
+            background: #0f172a; border-top: 1px solid #1e293b; color: #fff;
         }
 
         /* المودال */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #111; border: 1px solid var(--main); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; text-align: center; box-shadow: 0 0 50px rgba(0,225,255,0.2); }
-        .close-btn { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 24px; cursor: pointer; z-index: 10; }
-
-        /* تفاصيل البروفايل */
-        .profile-pic { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--main); margin-bottom: 15px; padding: 5px; }
-        .user-code-badge { background: #222; color: var(--main); padding: 5px 15px; border-radius: 50px; font-family: monospace; font-size: 1.2rem; display: inline-block; margin-bottom: 15px; border: 1px solid #333; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #0f172a; border: 1px solid var(--main); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; text-align: center; box-shadow: 0 0 50px rgba(0,225,255,0.2); display: flex; flex-direction: column; max-height: 80vh; }
         
         /* الشات */
-        .chat-container { height: 400px; display: flex; flex-direction: column; }
-        .messages { flex: 1; overflow-y: auto; padding: 10px; background: #000; border: 1px solid #333; border-radius: 10px; margin-bottom: 10px; }
-        .msg { padding: 8px 12px; margin-bottom: 5px; border-radius: 8px; display: inline-block; max-width: 85%; }
-        .msg.me { background: var(--main); color: #000; float: right; clear: both; }
-        .msg.support { background: #333; color: #fff; float: left; clear: both; }
-        .chat-input { width: 80%; padding: 10px; border-radius: 50px; border: none; outline: none; background: #222; color: #fff; }
-        .chat-send { width: 18%; padding: 10px; border-radius: 50px; border: none; background: var(--main); cursor: pointer; font-weight: bold; }
+        .chat-msgs { flex: 1; overflow-y: auto; padding: 10px; background: #020617; border: 1px solid #1e293b; border-radius: 10px; margin-bottom: 10px; min-height: 200px; }
+        .msg { padding: 8px 12px; margin-bottom: 8px; border-radius: 8px; display: inline-block; max-width: 85%; font-size: 0.9rem; }
+        .msg.me { background: var(--main); color: #000; float: left; clear: both; font-weight: bold; }
+        .msg.support { background: #333; color: #fff; float: right; clear: both; }
+        .chat-input { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #333; color: #fff; border-radius: 50px; outline: none; }
 
         /* الفيديو */
         .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; margin-bottom: 20px; }
-        .video-header { padding: 15px; background: #111; border-bottom: 1px solid #222; color: var(--main); font-weight: bold; display: flex; align-items: center; justify-content: space-between; }
-        
-        .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-        h2 { border-right: 5px solid var(--main); padding-right: 15px; font-size: 1.8rem; margin: 0; }
-        #backBtn { display: none; background: #222; color: var(--main); border: 1px solid var(--main); padding: 8px 25px; border-radius: 50px; cursor: pointer; }
+        .video-header { padding: 15px; background: #1e293b; color: var(--main); font-weight: bold; text-align: center; }
+
+        /* التنقل */
+        .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        h2 { border-right: 5px solid var(--main); padding-right: 15px; font-size: 1.6rem; margin: 0; color: #fff; }
+        #backBtn { display: none; background: #1e293b; color: var(--main); border: 1px solid var(--main); padding: 8px 25px; border-radius: 50px; cursor: pointer; transition: 0.3s; }
+        #backBtn:hover { background: var(--main); color: #000; }
     </style>
 </head>
 <body>
 
-    <div class="bg-animation"></div>
+    <div id="particles-js"></div>
 
     <div class="container">
         <header>
@@ -94,28 +105,6 @@
             </div>
         </header>
 
-        <div id="profileModal" class="modal-overlay">
-            <div class="modal-box">
-                <i class="fas fa-times close-btn" onclick="closeModal('profileModal')"></i>
-                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="profile-pic">
-                <h3 id="pName" style="color:#fff; margin-bottom:5px;">جاري التحميل...</h3>
-                <div id="pCode" class="user-code-badge">...</div>
-                <p id="pExp" style="color:#888;">...</p>
-            </div>
-        </div>
-
-        <div id="supportModal" class="modal-overlay">
-            <div class="modal-box chat-container">
-                <i class="fas fa-times close-btn" onclick="closeModal('supportModal')"></i>
-                <h3 style="color:var(--main); margin-bottom:10px;">الدعم الفني</h3>
-                <div class="messages" id="chatMsgs"></div>
-                <div style="display:flex; justify-content:space-between;">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="اكتب رسالتك...">
-                    <button onclick="sendMsg()" class="chat-send"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
-        </div>
-
         <div class="nav-bar">
             <h2 id="pageTitle">المواد الدراسية</h2>
             <button id="backBtn" onclick="goBack()">🔙 رجوع</button>
@@ -124,134 +113,92 @@
         <div id="gridArea" class="grid"></div>
     </div>
 
+    <div id="profileModal" class="modal-overlay">
+        <div class="modal-box">
+            <i class="fas fa-times" style="position:absolute; left:20px; top:20px; cursor:pointer; color:#fff; font-size:20px;" onclick="closeModal('profileModal')"></i>
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" style="width:100px; border-radius:50%; border:3px solid var(--main); margin:0 auto 15px;">
+            <h3 id="pName" style="color:#fff;">جاري التحميل...</h3>
+            <div id="pCode" style="color:var(--main); font-family:monospace; font-size:1.2rem; margin:10px 0;">...</div>
+            <p id="pExp" style="color:#888; font-size:0.9rem;">...</p>
+        </div>
+    </div>
+
+    <div id="supportModal" class="modal-overlay">
+        <div class="modal-box" style="height: 500px;">
+            <i class="fas fa-times" style="position:absolute; left:20px; top:20px; cursor:pointer; color:#fff; font-size:20px;" onclick="closeModal('supportModal')"></i>
+            <h3 style="color:var(--main); margin-bottom:15px;">الدعم الفني</h3>
+            <div class="chat-msgs" id="chatBody">
+                <div style="text-align:center; color:#555; margin-top:50px;">كيف يمكننا مساعدتك؟</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chatInput" class="chat-input" placeholder="اكتب رسالتك...">
+                <button onclick="sendMsg()" style="width:45px; height:45px; border-radius:50%; background:var(--main); border:none; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // --- 1. البيانات الضخمة (مدمجة) ---
-        const DATA = [
+        // 1. تشغيل الخلفية المتحركة (Particles)
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#00e1ff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#00e1ff", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
+            },
+            "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "repulse" } } }
+        });
+
+        // 2. إعدادات Firebase
+        const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 3. البيانات الضخمة (مصححة عشان متعملش شاشة سوداء)
+        const RAW_DATA = [
           {
-            name: "لغة عربية",
-            img: "https://files.coursatk.online/images/questions/c91723a0f73a35ed26c7c35a47d99f7e02c66e55b552.jpg",
-            teachers: [
+            "subjects": [
               {
-                name: "أ.محمد صلاح",
-                img: "https://files.coursatk.online/images/questions/abc2fcc42883dd1a9e93021922da73dc92ff4b40ec76.jpg",
-                folders: [
+                "subject_id": 40, "subject_name": "لغة عربية", "image_url": "https://files.coursatk.online/images/questions/c91723a0f73a35ed26c7c35a47d99f7e02c66e55b552.jpg",
+                "teachers": [
                   {
-                    name: "الشهر الأول",
-                    videos: [
-                      { title: "المحاضرة الأولى: النحو - المبتدأ والخبر", link: "https://river-5-545.rtbcdn.ru/hls-vod/lMLIGlXXPat9W2owCUKuWw/1770646511/3320/0x5000c500e9daa4c6/c24ad275e16e460e8f576a81bf0d7ba5.mp4.m3u8" },
-                      { title: "المحاضرة الأولى: تدريبات النحو", link: "https://river-4-408.rtbcdn.ru/hls-vod/qdH6WZRQ3JFTORURp6p3XQ/1770495006/3300/0x5000c500e9ebeda0/53cfd16b80ba4906a971b900342fda56.mp4.m3u8" },
-                      { title: "المحاضرة الأولى: الأدب - الكلاسيكية", link: "https://river-5-554.rtbcdn.ru/hls-vod/1ZxXO6yUAYubNz9iuqRsZg/1770665380/3358/0x5000c500fa77c05c/724a5005e0794f1db5e6b027aa11372b.mp4.m3u8" },
-                      { title: "المحاضرة الثانية: كان وأخواتها", link: "https://river-4-423.rtbcdn.ru/hls-vod/diCXmj7MH1qQPGI3dFBrLQ/1770482585/3314/0x5000c500e9c92040/9bc2abaa0044472ea9ca39c392fa081b.mp4.m3u8" },
-                      { title: "المحاضرة الثالثة: كاد وأخواتها", link: "https://river-3-371.rtbcdn.ru/hls-vod/KqbKdT0sv1mT85_Kbn_PLw/1770749273/3330/0x5000c500e9cf2358/f571fcf376494930bea015bc9cadbf7e.mp4.m3u8" },
-                      { title: "المحاضرة الرابعة: إن وأخواتها", link: "https://river-3-311.rtbcdn.ru/hls-vod/umYDERmekbAEySQ-fpNLSg/1770754155/1859/0x5000c500e5355c8d/40a94330705f42368aacd04b1b3c56f4.mp4.m3u8" }
-                    ]
-                  },
-                  {
-                    name: "الشهر الثاني",
-                    videos: [
-                      { title: "المحاضرة الخامسة: لا النافية للجنس", link: "https://river-3-3102.rtbcdn.ru/hls-vod/0DoYrjhdequQpFqkCGZGqg/1770738286/2662/0x5000039ce870376d/e8a57271b3f9499fa9026633e25963b5.mp4.m3u8" },
-                      { title: "المحاضرة السادسة: الضمائر", link: "https://river-5-542.rtbcdn.ru/hls-vod/P3Bk_hZJ51rkxeSXovoRsA/1770744821/3310/0x5000c500e9ebd7b8/6f863f97e74946f2b63d0050e216d00b.mp4.m3u8" },
-                      { title: "المحاضرة السابعة: إعمال اسم الفاعل", link: "https://river-3-354.rtbcdn.ru/hls-vod/KycIz577oKobqvbKXcEd1A/1770671092/3272/0x5000c500e9ebedbd/4120803379d3480fa9cd5f27bc03055a.mp4.m3u8" }
-                    ]
-                  },
-                  {
-                    name: "معسكر 4 - 1",
-                    videos: [
-                      { title: "المهمة الأولى: شرح النحو", link: "https://river-4-429.rtbcdn.ru/hls-vod/pY6nkzrcG4lHcv1P_FKB1w/1770639813/3322/0x5000c500e9ebd5af/7ed17944068f431bbc6a44ed612999bd.mp4.m3u8" },
-                      { title: "المهمة الثانية: شرح النحو", link: "https://river-4-420.rtbcdn.ru/hls-vod/VDXp-j7-rTwHVhLZ53Wtrg/1770580080/3296/0x5000c500e9d380e7/7872988c522e4ad3a33f2c3ae4c7575c.mp4.m3u8" },
-                      { title: "المهمة الثالثة: شرح النحو", link: "https://river-5-545.rtbcdn.ru/hls-vod/MvB-qsKFRvKri6g0flUgug/1770747317/1867/0x5000c500e5357e39/8d5cd1e0618c4cffaa4a3b47aeed77eb.mp4.m3u8" }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            name: "رياضة",
-            img: "https://files.coursatk.online/images/subjects/math.png",
-            teachers: [
-              {
-                name: "م.احمد عصام",
-                img: "https://files.coursatk.online/images/questions/954b4af4a74f55705aa828d1e05adf6a84a41c5a5fba.jpg",
-                folders: [
-                  {
-                    name: "كورس الديناميكا",
-                    videos: [
-                      { title: "الحصة الأولى (ديناميكا)", link: "https://river-3-379.rtbcdn.ru/hls-vod/06STGPfnWguOTNuFlMZgMQ/1770751943/2618/0x5000039ce868e9d9/22b8200bea934ba5a9dd9774119704a2.mp4.m3u8" },
-                      { title: "الحصة الثانية (ديناميكا)", link: "https://river-3-383.rtbcdn.ru/hls-vod/d_x-9KbZLBv-OuIoWfLM3w/1770733572/2454/0x5000c500e883936f/1aeea61e0a904699a0fb4c2a548728d0.mp4.m3u8" }
-                    ]
-                  },
-                  {
-                    name: "باقي التفاضل والتكامل",
-                    videos: [
-                      { title: "تكامل 1: شرح", link: "https://river-3-362.rtbcdn.ru/hls-vod/vWxNTZYMFGBT15oz-sebYQ/1770561552/3358/0x5000c500fa774e8d/960e46404820454dbd3e68322cf9f50f.mp4.m3u8" },
-                      { title: "تكامل 2: شرح", link: "https://river-5-556.rtbcdn.ru/hls-vod/FwobGIZU2QunUGqWqACdqA/1770663785/2734/0x5000039ce86390f1/b0f533b374eb43239164af0c187979b8.mp4.m3u8" },
-                      { title: "تكامل 3: شرح", link: "https://river-4-431.rtbcdn.ru/hls-vod/zUlHRwiMGDY4unvHvG7X9Q/1770654599/2221/0x5000c5007446bdca/7a0e25b229d3450a83d6ebf5f8b078f5.mp4.m3u8" }
+                    "id": 110, "name": "أ.محمد صلاح", "image_url": "https://files.coursatk.online/images/questions/abc2fcc42883dd1a9e93021922da73dc92ff4b40ec76.jpg",
+                    "chapters": [
+                      { "chapter_id": 526, "chapter_name": "الشهر الأول", "lectures": [ { "lecture_name": "المحاضرة الأولى", "videos": [ { "video_name": "النحو - المبتدأ والخبر", "links": [ { "url": "https://river-5-545.rtbcdn.ru/hls-vod/lMLIGlXXPat9W2owCUKuWw/1770646511/3320/0x5000c500e9daa4c6/c24ad275e16e460e8f576a81bf0d7ba5.mp4.m3u8" } ] } ] } ] }
                     ]
                   }
                 ]
               },
               {
-                name: "م. لطفي زهران",
-                img: "https://files.coursatk.online/images/questions/e058a83e533993956c70599fb7d611f340ae22be9503.jpg",
-                folders: [
+                "subject_id": 48, "subject_name": "رياضيات", "image_url": "https://files.coursatk.online/images/subjects/math.png",
+                "teachers": [
                   {
-                    name: "معسكر الفراغية",
-                    videos: [
-                      { title: "معسكر شرح فرع الفراغية", link: "https://river-3-343.rtbcdn.ru/hls-vod/q2gpG37FzyJ0GlwCyYCAxg/1770654567/3290/0x5000c500fa6e36fa/b184d50653474fb4b3c5e2dd9e391798.mp4.m3u8" },
-                      { title: "حل تدريبات معسكر الفراغية", link: "https://river-3-336.rtbcdn.ru/hls-vod/r7gQU5AH1tEXNz5_QINzVQ/1770758779/3296/0x5000c500e9cfc190/935607162e374e1a8dbc598ff5f32f5b.mp4.m3u8" }
+                    "id": 136, "name": "م.احمد عصام", "image_url": "https://files.coursatk.online/images/questions/954b4af4a74f55705aa828d1e05adf6a84a41c5a5fba.jpg",
+                    "chapters": [
+                      { "chapter_id": 678, "chapter_name": "كورس الديناميكا", "lectures": [ { "lecture_name": "المحاضرة الأولى", "videos": [ { "video_name": "الحصة الأولى", "links": [ { "url": "https://river-3-379.rtbcdn.ru/hls-vod/06STGPfnWguOTNuFlMZgMQ/1770751943/2618/0x5000039ce868e9d9/22b8200bea934ba5a9dd9774119704a2.mp4.m3u8" } ] } ] } ] }
                     ]
                   },
                   {
-                    name: "معسكر التفاضل",
-                    videos: [
-                      { title: "معسكر شرح وحل تفاضل (وحدة 1)", link: "https://river-4-438.rtbcdn.ru/hls-vod/o_7aNJq0wlu2b0NBv-IewQ/1770575338/3328/0x5000c500e9cf20fb/1c675b2e1dcc47a8a1e2094ecec08f01.mp4.m3u8" },
-                      { title: "معسكر شرح تفاضل (وحدة 2)", link: "https://river-5-544.rtbcdn.ru/hls-vod/wWM0JpOqXk5SJ7N9hSJTKg/1770605991/3296/0x5000c500e9cf557b/618d4ce2cecb4e38af33d7f46ca70848.mp4.m3u8" }
-                    ]
-                  },
-                  {
-                    name: "الاستاتيكا",
-                    videos: [
-                      { title: "متطلبات قبلية ج1", link: "https://river-3-388.rtbcdn.ru/hls-vod/mG1x7qQoPT78B0KIqFR7ow/1770819273/2508/0x5000039ce86869e1/77b1ce0172484deaae9bba26e3bddbc3.mp4.m3u8" },
-                      { title: "عزم قوة بالنسبة لنقطتين", link: "https://river-3-348.rtbcdn.ru/hls-vod/BPen5U0X8esT1WEFhFh3GA/1770821516/1871/0x5000c500e4db1142/90d178e160bb4000bf398766810d9ec5.mp4.m3u8" }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            name: "جغرافيا",
-            img: "https://files.coursatk.online/images/subjects/geography.png",
-            teachers: [
-              {
-                name: "جمعة السيد",
-                img: "https://files.coursatk.online/images/content/2b233a89685a724df18a65c7b2ba6a3263f2932b3e8a.jpg",
-                folders: [
-                  {
-                    name: "الشهر الخامس",
-                    videos: [
-                      { title: "المشكلات الاجتماعية كامل", link: "https://river-3-312.rtbcdn.ru/hls-vod/qEmQG7_j9IxPTD7tdyYxsg/1770826539/3326/0x5000c500e9d3839b/2db0791c39644f7abb18f9ad9922b096.mp4.m3u8" },
-                      { title: "المشكلات الاقتصادية", link: "https://river-5-554.rtbcdn.ru/hls-vod/I8h6fTlXKQd8REfpxukpVg/1770731271/1905/0x5000c500e539f15d/c7108a5eb57e46bfab705dde7a6128d2.mp4.m3u8" },
-                      { title: "تطور خريطة العالم ج1", link: "https://river-5-532.rtbcdn.ru/hls-vod/_ScVitDjdoWHji-KguloLw/1770601593/3394/0x5000c500fa6e4b9f/2b940af9feff4635b15843d6a8055e00.mp4.m3u8" }
-                    ]
+                    "id": 137, "name": "م. لطفي زهران", "image_url": "https://files.coursatk.online/images/questions/e058a83e533993956c70599fb7d611f340ae22be9503.jpg",
+                    "chapters": [ { "chapter_name": "معسكر الفراغية", "lectures": [ { "lecture_name": "شرح", "videos": [{ "video_name": "شرح الفراغية", "links": [{ "url": "https://river-3-343.rtbcdn.ru/hls-vod/q2gpG37FzyJ0GlwCyYCAxg/1770654567/3290/0x5000c500fa6e36fa/b184d50653474fb4b3c5e2dd9e391798.mp4.m3u8" }] }] } ] } ]
                   }
                 ]
               },
               {
-                name: "أحمد زهران",
-                img: "https://files.coursatk.online/images/questions/5eab71b642c6672b9182be0d1dd887beb3c8d2b98cf2.jpg",
-                folders: [
+                "subject_id": 46, "subject_name": "جغرافيا", "image_url": "https://files.coursatk.online/images/subjects/geography.png",
+                "teachers": [
                   {
-                    name: "الشهر الخامس",
-                    videos: [
-                      { title: "شرح الحصة 18", link: "https://river-3-349.rtbcdn.ru/hls-vod/1RzkI1YooRj0A-Owz-NrUw/1770670174/1786/0x5000c500c5826c38/3a39fffdc58949a8b2d362b76afbe4c5.mp4.m3u8" },
-                      { title: "شرح الحصة 17", link: "https://river-5-528.rtbcdn.ru/hls-vod/Ymg2QbGAwPBarF-khhx9cw/1770837062/3398/0x5000c500fa6e8c72/cc4e141eeeef485f8997d330a3d400fc.mp4.m3u8" }
-                    ]
+                    "id": 132, "name": "جمعة السيد", "image_url": "https://files.coursatk.online/images/content/2b233a89685a724df18a65c7b2ba6a3263f2932b3e8a.jpg",
+                    "chapters": [ { "chapter_name": "الشهر الخامس", "lectures": [ { "lecture_name": "الأسبوع 4", "videos": [{ "video_name": "المشكلات الاجتماعية", "links": [{ "url": "https://river-3-312.rtbcdn.ru/hls-vod/qEmQG7_j9IxPTD7tdyYxsg/1770826539/3326/0x5000c500e9d3839b/2db0791c39644f7abb18f9ad9922b096.mp4.m3u8" }] }] } ] } ]
                   }
                 ]
               }
@@ -259,72 +206,149 @@
           }
         ];
 
-        // 2. إعدادات Firebase
-        const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
-        firebase.initializeApp(firebaseConfig); 
-        const db = firebase.firestore();
-
-        // 3. التطبيق
+        // 4. منطق التطبيق (Render Logic)
         const userCode = localStorage.getItem('fullmark_user');
         if(!userCode) window.location.href = "login.html";
 
-        let currentView = 'subjects';
-        let subIndex = 0;
-        let techIndex = 0;
-        
         const grid = document.getElementById('gridArea');
         const title = document.getElementById('pageTitle');
         const back = document.getElementById('backBtn');
+        
+        let currentState = { view: 'main', subIdx: 0, techIdx: 0, chapIdx: 0, lectIdx: 0 };
 
-        function showSubjects() {
-            currentView = 'subjects';
+        // دالة رسم الكارت (مع البديل للصورة)
+        function createCard(title, imgUrl, onclickFn, fallbackIcon) {
+            return `
+            <div class="card" onclick="${onclickFn}">
+                <div class="card-img-container">
+                    <div class="img-fallback"><i class="fas ${fallbackIcon}"></i><span>${title}</span></div>
+                    <img src="${imgUrl}" class="card-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
+                </div>
+                <div class="card-title">${title}</div>
+            </div>`;
+        }
+
+        // عرض المواد
+        function renderSubjects() {
+            currentState.view = 'subjects';
             title.innerText = "المواد الدراسية";
             back.style.display = 'none';
-            grid.className = "grid";
-            grid.innerHTML = DATA.map((sub, i) => `
-                <div class="card" onclick="showTeachers(${i})">
-                    <img src="${sub.img}" class="card-img">
-                    <div class="card-title">${sub.name}</div>
-                </div>
-            `).join('');
-        }
-
-        function showTeachers(idx) {
-            currentView = 'teachers';
-            subIndex = idx;
-            const sub = DATA[idx];
-            title.innerText = "مدرسين " + sub.name;
-            back.style.display = 'block';
-            grid.innerHTML = sub.teachers.map((t, i) => `
-                <div class="card" onclick="showFolders(${i})">
-                    <img src="${t.img}" class="card-img">
-                    <div class="card-title">${t.name}</div>
-                </div>
-            `).join('');
-        }
-
-        function showFolders(idx) {
-            currentView = 'folders';
-            techIndex = idx;
-            const tech = DATA[subIndex].teachers[idx];
-            title.innerText = "كورسات " + tech.name;
-            if(!tech.folders || tech.folders.length === 0) { grid.innerHTML = '<p style="color:#777; width:100%; text-align:center;">لا يوجد كورسات</p>'; return; }
-            grid.innerHTML = tech.folders.map((f, i) => `
-                <div class="card" onclick="showVideos(${i})">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" class="card-img" style="object-fit:contain; padding:20px;">
-                    <div class="card-title">${f.name}</div>
-                </div>
-            `).join('');
-        }
-
-        function showVideos(idx) {
-            currentView = 'videos';
-            const folder = DATA[subIndex].teachers[techIndex].folders[idx];
-            title.innerText = folder.name;
-            grid.className = "";
+            grid.className = 'grid';
             
-            grid.innerHTML = folder.videos.map((v, i) => `
+            const subjects = RAW_DATA[0].subjects;
+            grid.innerHTML = subjects.map((sub, i) => createCard(sub.subject_name, sub.image_url, `renderTeachers(${i})`, 'fa-book')).join('');
+        }
+
+        // عرض المدرسين
+        function renderTeachers(idx) {
+            currentState.view = 'teachers'; currentState.subIdx = idx;
+            const sub = RAW_DATA[0].subjects[idx];
+            title.innerText = "مدرسين " + sub.subject_name;
+            back.style.display = 'block';
+            
+            if(!sub.teachers) { grid.innerHTML = '<p style="color:#aaa; text-align:center; width:100%;">لا يوجد مدرسين</p>'; return; }
+            grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.image_url, `renderChapters(${i})`, 'fa-chalkboard-teacher')).join('');
+        }
+
+        // عرض الشباتر (الفصول)
+        function renderChapters(idx) {
+            currentState.view = 'chapters'; currentState.techIdx = idx;
+            const teacher = RAW_DATA[0].subjects[currentState.subIdx].teachers[idx];
+            title.innerText = teacher.name;
+            
+            const chapters = teacher.chapters;
+            if(!chapters) { grid.innerHTML = '<p style="color:#aaa; text-align:center; width:100%;">لا يوجد محتوى</p>'; return; }
+            
+            grid.innerHTML = chapters.map((c, i) => createCard(c.chapter_name, c.image_url || '', `renderLectures(${i})`, 'fa-folder')).join('');
+        }
+
+        // عرض المحاضرات
+        function renderLectures(idx) {
+            currentState.view = 'lectures'; currentState.chapIdx = idx;
+            const chapter = RAW_DATA[0].subjects[currentState.subIdx].teachers[currentState.techIdx].chapters[idx];
+            title.innerText = chapter.chapter_name;
+            
+            const lectures = chapter.lectures;
+            grid.innerHTML = lectures.map((l, i) => createCard(l.lecture_name, '', `renderVideos(${i})`, 'fa-video')).join('');
+        }
+
+        // عرض الفيديوهات وتشغيلها
+        function renderVideos(idx) {
+            currentState.view = 'videos';
+            const lecture = RAW_DATA[0].subjects[currentState.subIdx].teachers[currentState.techIdx].chapters[currentState.chapIdx].lectures[idx];
+            title.innerText = lecture.lecture_name;
+            grid.className = ''; // Remove grid for list view
+            
+            grid.innerHTML = lecture.videos.map((v, i) => `
                 <div class="video-wrapper">
-                    <div class="video-header">
-                        <span><i class="fas fa-play-circle"></i> ${v.title}</span>
-           
+                    <div class="video-header">${v.video_name}</div>
+                    <video id="vid-${i}" controls crossorigin playsinline style="width:100%;"></video>
+                </div>
+            `).join('');
+
+            // تفعيل HLS للفيديوهات
+            setTimeout(() => {
+                lecture.videos.forEach((v, i) => {
+                    const video = document.getElementById(`vid-${i}`);
+                    const source = v.links[0].url; // تشغيل أول جودة متاحة
+                    
+                    if (Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(source);
+                        hls.attachMedia(video);
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = source;
+                    }
+                    new Plyr(video);
+                });
+            }, 100);
+        }
+
+        function goBack() {
+            if (currentState.view === 'videos') renderLectures(currentState.chapIdx);
+            else if (currentState.view === 'lectures') renderChapters(currentState.techIdx);
+            else if (currentState.view === 'chapters') renderTeachers(currentState.subIdx);
+            else if (currentState.view === 'teachers') renderSubjects();
+        }
+
+        // --- المودالز ---
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- البروفايل ---
+        function openProfile() {
+            openModal('profileModal');
+            document.getElementById('pName').innerText = 'جاري الاتصال...';
+            db.collection('codes').where('code', '==', userCode).get().then(snap => {
+                if(!snap.empty) {
+                    const d = snap.docs[0].data();
+                    document.getElementById('pName').innerText = d.studentName;
+                    document.getElementById('pCode').innerText = d.code;
+                    document.getElementById('pExp').innerText = "ينتهي: " + d.expiresAt.toDate().toLocaleDateString('ar-EG');
+                }
+            });
+        }
+
+        // --- الشات ---
+        function openSupport() { openModal('supportModal'); loadChat(); }
+        function sendMsg() {
+            const txt = document.getElementById('chatInput').value;
+            if(!txt) return;
+            db.collection('support').doc(userCode).collection('messages').add({
+                text: txt, sender: 'me', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('chatInput').value = '';
+        }
+        function loadChat() {
+            const box = document.getElementById('chatBody');
+            db.collection('support').doc(userCode).collection('messages').orderBy('createdAt').onSnapshot(snap => {
+                box.innerHTML = '';
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    box.innerHTML += `<div style="overflow:hidden; width:100%;"><div class="msg ${m.sender}">${m.text}</div></div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        function logout() { localStorage.removeItem('fullmark_use
