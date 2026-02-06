@@ -1,73 +1,243 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول | Full Mark</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login | FULL MARK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a; color: white;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0;
+            background-color: #020617; /* كحلي غامق جداً */
+            overflow: hidden; /* منع السكرول */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
-        .login-box {
-            background: #1e293b; padding: 40px; border-radius: 16px;
-            text-align: center; width: 350px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155;
+
+        /* خلفية الانيميشن (Particles) */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: radial-gradient(circle at center, #1e40af 0%, #020617 70%);
         }
+
+        /* الحاوية الرئيسية */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        /* اللوجو / العنوان */
+        .brand-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #e0f2fe; /* أبيض مزرق */
+            text-transform: uppercase;
+            text-shadow: 0 0 20px #0ea5e9, 0 0 40px #0284c7; /* توهج أزرق */
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #0ea5e9, 0 0 20px #0ea5e9; }
+            to { text-shadow: 0 0 20px #38bdf8, 0 0 40px #38bdf8; }
+        }
+
+        /* الصندوق الزجاجي (Glassmorphism) */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(56, 189, 248, 0.3); /* حدود زرقاء خفيفة */
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        /* حقل الإدخال */
         input {
-            width: 85%; padding: 14px; margin: 20px 0; border-radius: 10px;
-            border: 1px solid #475569; background: #0f172a; color: white;
-            font-size: 18px; text-align: center; outline: none;
+            width: 100%;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.1rem;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
+
+        input::placeholder { color: #94a3b8; }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        /* الزرار */
         button {
-            width: 93%; padding: 14px; background: #2563eb; color: white;
-            border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            text-transform: uppercase;
         }
-        button:hover { background: #1d4ed8; }
-        #errorMsg { color: #ef4444; margin-top: 15px; display: none; }
+
+        button:active { transform: scale(0.98); }
+
+        #errorMsg {
+            color: #f87171;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* ريسبونسيف للموبايل والكمبيوتر */
+        @media (min-width: 768px) {
+            .brand-title { font-size: 4.5rem; }
+            .glass-box { padding: 50px 40px; }
+        }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>تسجيل الدخول</h2>
-        <p style="color:#94a3b8">أدخل الكود الخاص بك</p>
-        <input type="text" id="studentCode" placeholder="Code Here">
-        <button onclick="login()">دخول</button>
-        <div id="errorMsg">الكود غير صحيح!</div>
+
+    <div id="particles-js"></div>
+
+    <div class="login-container">
+        <h1 class="brand-title">FULL MARK</h1>
+        
+        <div class="glass-box">
+            <div class="input-group">
+                <input type="text" id="studentCode" placeholder="أدخل الكود الخاص بك" autocomplete="off">
+            </div>
+            <button onclick="login()">دخول</button>
+            <div id="errorMsg">الكود غير صحيح أو منتهي الصلاحية</div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
     <script>
+        // ==========================================
+        // 1. إعدادات الخلفية المتحركة
+        // ==========================================
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#38bdf8" }, /* لون النقط أزرق فاتح */
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "out_mode": "out" }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } },
+                "modes": { "repulse": { "distance": 100, "duration": 0.4 } }
+            },
+            "retina_detect": true
+        });
+
+        // ==========================================
+        // 2. كود Firebase (نفس اللوجيك القديم)
+        // ==========================================
         const firebaseConfig = {
-          apiKey: "AIzaSyD0Yq1TCIkjCzDJuzbWCA6XNDC4REsIJ84",
-          authDomain: "full-mark-2878d.firebaseapp.com",
-          projectId: "full-mark-2878d",
-          storageBucket: "full-mark-2878d.firebasestorage.app",
-          messagingSenderId: "793615165668",
-          appId: "1:793615165668:web:b5e0cde21901ff060d24f1"
+            apiKey: "AIzaSyD0Yq1TCIkjCzDJuzbWCA6XNDC4REsIJ84",
+            authDomain: "full-mark-2878d.firebaseapp.com",
+            projectId: "full-mark-2878d",
+            storageBucket: "full-mark-2878d.firebasestorage.app",
+            messagingSenderId: "793615165668",
+            appId: "1:793615165668:web:b5e0cde21901ff060d24f1"
         };
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        function login() {
-            const code = document.getElementById('studentCode').value.trim();
-            if(!code) return;
-            document.querySelector('button').innerText = "جاري التحقق...";
+        async function login() {
+            const codeInput = document.getElementById('studentCode');
+            const code = codeInput.value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const btn = document.querySelector('button');
             
-            db.collection('codes').where('code', '==', code).get().then(snap => {
-                if(!snap.empty) {
-                    localStorage.setItem('fullmark_user', code);
-                    window.location.href = "index.html";
-                } else {
-                    document.getElementById('errorMsg').style.display = 'block';
-                    document.querySelector('button').innerText = "دخول";
+            if (!code) return;
+
+            btn.innerHTML = '<span style="opacity:0.8">جاري التحقق...</span>';
+            errorMsg.style.display = 'none';
+
+            try {
+                const snapshot = await db.collection('codes').where('code', '==', code).get();
+
+                if (snapshot.empty) {
+                    showError("الكود غير صحيح!");
+                    return;
                 }
-            });
+
+                const doc = snapshot.docs[0];
+                const data = doc.data();
+                const now = new Date();
+                const expiryDate = data.expiresAt ? data.expiresAt.toDate() : new Date();
+
+                if (data.status === 'banned') {
+                    showError("تم حظر هذا الحساب");
+                    return;
+                }
+
+                if (data.status === 'expired' || now > expiryDate) {
+                    if(data.status !== 'expired') {
+                         db.collection('codes').doc(doc.id).update({ status: 'expired' });
+                    }
+                    showError("انتهت صلاحية الكود");
+                    return;
+                }
+
+                localStorage.setItem('fullmark_user', code);
+                window.location.href = "index.html"; 
+
+            } catch (error) {
+                console.error(error);
+                showError("تأكد من الانترنت وحاول مرة أخرى");
+            }
+
+            function showError(msg) {
+                errorMsg.innerText = msg;
+                errorMsg.style.display = 'block';
+                btn.innerText = "دخول";
+            }
         }
     </script>
 </body>
-</html>
+    </html>
+    
