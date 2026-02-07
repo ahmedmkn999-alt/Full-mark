@@ -10,21 +10,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* الثيم الأزرق النيون */
         :root { --main: #00e1ff; --bg: #02050a; --card-bg: #0a0f18; --text: #fff; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background: linear-gradient(135deg, #02050a 0%, #050a14 100%); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
+        /* خلفية ثابتة وآمنة تماماً */
+        body { 
+            background: linear-gradient(135deg, #02050a 0%, #050a14 100%); 
+            color: var(--text); min-height: 100vh; overflow-x: hidden; 
+        }
 
-        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 15px; }
+        /* الحاوية الرئيسية بطبقة عالية عشان مفيش حاجة تغطيها */
+        .container { 
+            position: relative; 
+            z-index: 100; /* رقم عالي جداً */
+            max-width: 1200px; margin: 0 auto; padding: 15px; 
+        }
         
         /* الهيدر */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
             background: rgba(10, 15, 24, 0.95); border-bottom: 2px solid var(--main);
             padding: 10px 20px; border-radius: 20px; margin-bottom: 25px; 
-            box-shadow: 0 0 30px rgba(0, 225, 255, 0.15); backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 225, 255, 0.15); 
         }
         .logo { font-size: 1.8rem; font-weight: 900; color: var(--main); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 225, 255, 0.7); }
         
@@ -32,33 +40,32 @@
         
         .header-profile-img {
             width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--main);
-            object-fit: cover; cursor: pointer; transition: 0.3s;
+            object-fit: cover; cursor: pointer;
         }
         .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 225, 255, 0.3);
             background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; 
             font-size: 1.1rem; cursor: pointer; transition: 0.3s;
         }
-        .logout-btn { color: #ff4444; border-color: #ff4444; }
+        .icon-btn:active { background: var(--main); color: #000; }
 
         /* التنقل */
         .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         h2 { font-size: 1.4rem; color: var(--main); border-right: 4px solid var(--main); padding-right: 12px; margin: 0; }
         
-        /* زر الرجوع (تم إصلاحه) */
+        /* زر الرجوع */
         #backBtn { 
-            display: none; /* مخفي افتراضياً */
+            display: none; 
             background: transparent; color: var(--main); border: 2px solid var(--main); 
             padding: 6px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 0.9rem;
-            transition: 0.3s;
+            z-index: 101; /* فوق أي حاجة */
         }
-        #backBtn:active { background: var(--main); color: #000; }
 
         /* الشبكة */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; } }
 
-        .card { background: var(--card-bg); border: 1px solid rgba(0, 225, 255, 0.15); border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .card { background: var(--card-bg); border: 1px solid rgba(0, 225, 255, 0.15); border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.3s; }
         .card:active { transform: scale(0.97); border-color: var(--main); }
         
         .card-img-container { width: 100%; height: 170px; background: #000; display: flex; align-items: center; justify-content: center; }
@@ -69,19 +76,21 @@
         .video-list { display: flex; flex-direction: column; gap: 20px; }
         .video-wrapper { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #333; position: relative; }
         .video-header { padding: 15px; background: #111; color: var(--main); font-weight: bold; font-size: 1rem; border-bottom: 1px solid #333; }
+        
+        /* رسالة فارغة */
         .empty-msg { text-align: center; color: #777; margin-top: 50px; font-size: 1.2rem; grid-column: 1/-1; border: 1px dashed #333; padding: 20px; border-radius: 10px; }
 
         /* المودال */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-content { background: #0f121a; border: 1px solid var(--main); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 0 40px rgba(0, 225, 255, 0.2); }
-        .close { position: absolute; top: 15px; left: 15px; color: #fff; font-size: 22px; cursor: pointer; z-index: 10; }
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #0f121a; border: 1px solid var(--main); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; position: relative; }
+        .close { position: absolute; top: 15px; left: 15px; color: #fff; font-size: 22px; cursor: pointer; }
         
+        /* بروفايل */
         .profile-img-container { position: relative; display: inline-block; margin-bottom: 15px; cursor: pointer; }
         .modal-profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--main); padding: 3px; object-fit: cover; }
-        .edit-icon { position: absolute; bottom: 0; right: 0; background: var(--main); color: #000; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid #000; }
         .timer-digits { font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #fff; letter-spacing: 2px; margin-top: 10px; }
 
-        /* الشات */
+        /* شات */
         .chat-box { height: 400px; display: flex; flex-direction: column; }
         .chat-msgs { flex: 1; overflow-y: auto; padding: 15px; background: #050505; border: 1px solid #333; border-radius: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; }
@@ -92,7 +101,7 @@
         .send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--main); border: none; cursor: pointer; color: #000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false">
 
     <div class="container">
         <header>
@@ -121,7 +130,7 @@
             <span class="close" onclick="closeModal('profileModal')">&times;</span>
             <div class="profile-img-container" onclick="document.getElementById('uploadProfile').click()">
                 <img id="modalProfilePic" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="modal-profile-img">
-                <div class="edit-icon"><i class="fas fa-camera"></i></div>
+                <div style="position: absolute; bottom: 0; right: 0; background: var(--main); color: #000; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-camera"></i></div>
             </div>
             <input type="file" id="uploadProfile" style="display: none;" accept="image/*" onchange="changeProfilePic(this)">
             <div style="margin-bottom: 5px;"><span id="pName" style="color:#fff; font-weight:bold; font-size: 1.3rem;">...</span></div>
@@ -155,11 +164,16 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
+        // تنضيف أي مخلفات قديمة بتغطي الشاشة
+        document.body.style.overflow = "auto"; 
+        if(document.getElementById('security-alert')) document.getElementById('security-alert').style.display = 'none';
+        if(document.getElementById('particles-js')) document.getElementById('particles-js').style.display = 'none';
+
         const firebaseConfig = { apiKey: "AIzaSyBKY38XHjmC-iGqGrQio_YZ_i1iaIaE2Ds", authDomain: "full-mark-8d434.firebaseapp.com", projectId: "full-mark-8d434", storageBucket: "full-mark-8d434.firebasestorage.app", messagingSenderId: "802579483999", appId: "1:802579483999:web:cf73136ffbd75d5e0ebaea" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        // البيانات الكاملة
-        const ALL_DATA = [
+        // البيانات
+        let ALL_DATA = [
             {
                 name: "اللغة العربية", img: "https://i.postimg.cc/L6xvnk5X/mn-awl-mn-tklm-allght-alʿrbyt.jpg",
                 teachers: [{ name: "أ. محمد صلاح", img: "https://i.postimg.cc/ZRJy8gDR/FB-IMG-1770382315133.jpg", videos: [] }, { name: "أ. رضا الفاروق", img: "https://i.postimg.cc/c4Pg965p/1723904748-y-CL9UA.png", videos: [] }]
@@ -215,20 +229,18 @@
             </div>`;
         }
 
-        // عرض المواد
         function renderSubjects() {
             title.innerText = "المواد الدراسية";
-            back.style.display = 'none'; // إخفاء زر الرجوع في الرئيسية
+            back.style.display = 'none';
             grid.className = 'grid';
             viewStack = [{type: 'subjects'}];
             grid.innerHTML = ALL_DATA.map((sub, i) => createCard(sub.name, sub.img, `renderTeachers(${i})`)).join('');
         }
 
-        // عرض المدرسين
         window.renderTeachers = function(subIdx) {
             const sub = ALL_DATA[subIdx];
             title.innerText = sub.name;
-            back.style.display = 'inline-block'; // إظهار زر الرجوع
+            back.style.display = 'inline-block';
             viewStack.push({type: 'teachers', subIdx});
             
             if(!sub.teachers || sub.teachers.length === 0) {
@@ -238,11 +250,9 @@
             grid.innerHTML = sub.teachers.map((t, i) => createCard(t.name, t.img, `renderVideos(${subIdx}, ${i})`)).join('');
         }
 
-        // عرض الفيديوهات
         window.renderVideos = function(subIdx, teacherIdx) {
             const teacher = ALL_DATA[subIdx].teachers[teacherIdx];
             title.innerText = teacher.name;
-            back.style.display = 'inline-block'; // تأكيد إظهار زر الرجوع
             viewStack.push({type: 'videos'});
             grid.className = 'video-list';
 
@@ -262,11 +272,10 @@
             setTimeout(() => { Array.from(document.querySelectorAll('.plyr__video-embed')).map(p => new Plyr(p)); }, 500);
         }
 
-        // إصلاح زر الرجوع
         window.goBack = function() {
             if (viewStack.length > 1) {
-                viewStack.pop(); // احذف الصفحة الحالية
-                const prev = viewStack[viewStack.length - 1]; // هات الصفحة اللي قبلها
+                viewStack.pop(); 
+                const prev = viewStack[viewStack.length - 1]; 
 
                 if (prev.type === 'subjects') {
                     renderSubjects();
@@ -322,8 +331,8 @@
             });
         }
 
-        // --- الشات ---
         const userCode = localStorage.getItem('fullmark_user');
         function openSupport() { openModal('supportModal'); loadChat(); }
         function sendMsg() {
-            const txt = document.
+            const txt = document.getElementById('chatInput').value;
+            if(!txt)
