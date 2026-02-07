@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول | Full Mark</title>
+    <title>تسجيل الدخول | ذاكرلي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -90,7 +90,7 @@
 <body>
 
     <div class="login-card">
-        <div class="logo">FULL MARK</div>
+        <div class="logo">ذاكرلي</div>
         <div class="subtitle">بوابتك للتفوق الدراسي</div>
         
         <div id="loginForm">
@@ -122,15 +122,12 @@
         let timer;
 
         window.onload = function() {
-            // التحقق لو الطالب مسجل قبل كدة
             const savedUser = localStorage.getItem('fullmark_user');
             
             if (savedUser) {
-                // إظهار شاشة الترحيب وإخفاء الدخول
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('welcomeScreen').style.display = 'block';
                 
-                // بدء العداد التنازلي
                 let count = 5;
                 const counterEl = document.getElementById('countdown');
                 
@@ -139,15 +136,15 @@
                     counterEl.innerText = count;
                     if (count <= 0) {
                         clearInterval(timer);
-                        window.location.href = "index.html"; // توجيه للمنصة
+                        window.location.href = "index.html"; 
                     }
                 }, 1000);
             }
         };
 
         function cancelAutoLogin() {
-            clearInterval(timer); // وقف العداد
-            localStorage.removeItem('fullmark_user'); // مسح التسجيل القديم
+            clearInterval(timer); 
+            localStorage.removeItem('fullmark_user'); 
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
         }
@@ -167,8 +164,6 @@
                     btn.innerHTML = "تسجيل الدخول";
                 } else {
                     const data = snap.docs[0].data();
-                    
-                    // التحقق من تاريخ الانتهاء
                     const expDate = data.expiresAt.toDate();
                     const now = new Date();
                     
@@ -190,5 +185,4 @@
         }
     </script>
 </body>
-        </html>
-        
+</html>
